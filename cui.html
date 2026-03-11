@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>农户种苗资质展示页</title>
+    <style>
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+
+        
+        body {
+            background-color: #f5f7fa;
+            padding: 20px;
+        }
+
+        
+        .page-title {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #3498db;
+        }
+
+        
+        .seed-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        
+        .seed-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .seed-card:hover {
+            transform: translateY(-5px);
+        }
+
+        
+        .seed-image {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        
+        .seed-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        
+        .seed-card:hover .seed-image img {
+            transform: scale(1.05);
+        }
+
+        
+        .seed-info {
+            padding: 15px;
+        }
+
+        
+        .seed-variety {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        
+        .seed-price {
+            font-size: 16px;
+            color: #e74c3c;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        
+        .farmer-info {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        
+        @media (max-width: 768px) {
+            .seed-container {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            .seed-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1 class="page-title">农户种苗资质展示</h1>
+    
+    <div class="seed-container" id="seedDataContainer">
+        
+    </div>
+
+    <script>
+        
+        const seedData = [
+            { variety: "沃柑苗", price: "8.5元/株", farmer: "农户：张三（广西南宁）", image: "image/1.jpg"},
+            { variety: "砂糖橘苗", price: "7.2元/株", farmer: "农户：李四（广西桂林）", image: "image/2.jpg" },
+            { variety: "金煌芒果苗", price: "12.8元/株", farmer: "农户：王五（海南三亚）", image: "image/3.jpg" },
+            { variety: "贵妃芒果苗", price: "11.5元/株", farmer: "农户：赵六（海南海口）", image: "image/4.jpg"},
+            { variety: "阳光玫瑰葡萄苗", price: "15.6元/株", farmer: "农户：孙七（云南昆明）", image: "image/5.jpg" },
+            { variety: "巨峰葡萄苗", price: "9.8元/株", farmer: "农户：周八（山东烟台）", image: "image/6.jpg"  },
+            { variety: "红心猕猴桃苗", price: "10.5元/株", farmer: "农户：吴九（四川蒲江）", image: "image/7.jpg"},
+            { variety: "绿心猕猴桃苗", price: "8.8元/株", farmer: "农户：郑十（陕西周至）", image: "image/8.jpg" },
+            { variety: "车厘子苗", price: "25.8元/株", farmer: "农户：钱十一（山东泰安）", image: "image/9.jpg"},
+            { variety: "大樱桃苗", price: "22.5元/株", farmer: "农户：孙十二（辽宁大连）", image: "image/10.jpg" },
+            { variety: "蓝莓苗", price: "18.6元/株", farmer: "农户：李十三（贵州麻江）", image: "image/11.jpg" },
+            { variety: "草莓苗", price: "2.5元/株", farmer: "农户：王十四（安徽长丰）", image: "image/12.jpg" },
+            { variety: "西瓜苗", price: "1.8元/株", farmer: "农户：刘十五（河南开封）", image: "image/13.jpg" },
+            { variety: "哈密瓜苗", price: "2.2元/株", farmer: "农户：陈十六（新疆吐鲁番）", image: "image/14.jpg" },
+            { variety: "火龙果苗", price: "6.5元/株", farmer: "农户：杨十七（广东湛江）", image: "image/15.jpg" },
+            { variety: "百香果苗", price: "4.8元/株", farmer: "农户：黄十八（广西玉林）", image: "image/16.jpg" },
+            { variety: "荔枝苗", price: "18.5元/株", farmer: "农户：周十九（广东茂名）", image: "image/17.jpg" },
+            { variety: "龙眼苗", price: "16.8元/株", farmer: "农户：吴二十（福建莆田）", image: "image/18.jpg" },
+            { variety: "枇杷苗", price: "14.5元/株", farmer: "农户：郑二一（浙江塘栖）", image: "image/19.jpg" },
+            { variety: "板栗苗", price: "11.8元/株", farmer: "农户：冯二二（河北迁西）", image: "image/20.jpg" }
+        ];
+
+        
+        const container = document.getElementById('seedDataContainer');
+
+        
+        seedData.forEach(item => {
+            
+            const card = document.createElement('div');
+            card.className = 'seed-card';
+
+            
+            card.innerHTML = `
+                <div class="seed-image">
+                    <img src="${item.image}" alt="${item.variety}">
+                </div>
+                <div class="seed-info">
+                    <div class="seed-variety">${item.variety}</div>
+                    <div class="seed-price">价格：${item.price}</div>
+                    <div class="farmer-info">${item.farmer}</div>
+                </div>
+            `;
+
+            
+            container.appendChild(card);
+        });
+    </script>
+</body>
+</html>

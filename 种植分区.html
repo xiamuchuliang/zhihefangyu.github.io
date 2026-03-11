@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>园艺爱好者之家</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .sections {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .section {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .section h2 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            border-bottom: 3px solid #4CAF50;
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        .section p {
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+            color: #666;
+        }
+
+        .btn {
+            display: inline-block;
+            background: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #45a049;
+        }
+
+        .feature-section {
+            background: linear-gradient(135deg, #f9f9f9, #f0f0f0);
+            border-left: 5px solid #2196F3;
+        }
+
+        .feature-section h2 {
+            color: #2196F3;
+            border-bottom-color: #2196F3;
+        }
+
+        .feature-section .btn {
+            background: #2196F3;
+        }
+
+        .feature-section .btn:hover {
+            background: #1976D2;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            color: #666;
+            border-top: 1px solid #ddd;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .sections {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .section h2 {
+                font-size: 1.5rem;
+            }
+        }
+        
+    </style>
+</head>
+<body>
+    <a  class="nav-link" href="index.html">返回首页</a>
+    <div class="container">
+        <header>
+            <h1>园艺爱好者之家</h1>
+            <p class="subtitle">探索植物世界的奇妙之旅</p>
+        </header>
+
+        <div class="sections">
+            <!-- 新手区 -->
+            <div class="section">
+                <h2>新手区</h2>
+                <p>专为园艺新手设计的入门指南，包含基础种植知识、常见问题解答和简单易上手的植物推荐。无论你是第一次尝试种植，还是想要巩固基础技能，这里都能为你提供帮助。</p>
+                <a href="community1.html" class="btn">进入新手区</a>
+            </div>
+
+            <!-- 特色品种区 -->
+            <div class="section feature-section">
+                <h2>特色品种区</h2>
+                <p>探索我们精心挑选的特色植物品种，包括稀有花卉、多肉植物、热带植物等。每一种植物都有详细的介绍和养护指南，让你了解它们的独特魅力和养护要点。</p>
+                <a href="plant.html" class="btn">查看特色品种</a>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2026 智禾方隅. 保留所有权利.</p>
+        </footer>
+    </div>
+</body>
+</html>

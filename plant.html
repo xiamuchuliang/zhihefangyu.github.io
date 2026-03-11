@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>市面植物特色品种展示</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 自定义CSS -->
+    <style>
+        /* 基础样式 */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+        
+        /* 导航栏样式 */
+        .navbar {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        /* 主要内容区 */
+        .main-content {
+            min-height: 80vh;
+        }
+        
+        /* 植物卡片 */
+        .plant-card {
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .plant-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+        
+        /* 植物图片容器 */
+        .plant-img-container {
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+        }
+        
+        /* 植物图片 */
+        .plant-img {
+            height: 250px;
+            object-fit: cover;
+            width: 100%;
+        }
+        
+        /* 植物内容区域 */
+        .plant-content {
+            flex: 1;
+            padding: 1.25rem;
+        }
+        
+        /* 养护指南 */
+        .care-guide {
+            background-color: #f0f7f4;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        
+        /* 图标样式 */
+        .fas, .far {
+            margin-right: 8px;
+            color: #28a745;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .plant-card {
+                margin-bottom: 2rem;
+            }
+        }
+        
+        /* 动画效果 */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+    </style>
+</head>
+<body>
+    <!-- 页面标题 -->
+    <header class="bg-success text-white py-5">
+        <div class="container text-center">
+            <h1 class="display-4">市面植物特色品种展示</h1>
+            <p class="lead">探索特色植物的魅力与养护技巧</p>
+            
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="种植分区.html">
+                            <i class="fas fa-home"></i> 首页
+                        </a>
+                    </li>
+                </ul> 
+           
+        </div>
+        
+    </header>
+    
+    <!-- 主要内容区 -->
+    <main class="main-content py-5">
+        <div class="container">
+            <div class="row g-4">
+                <!-- 植物1：多肉植物 -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="plant-card card border-0 shadow-sm">
+                        <div class="plant-img-container">
+                            <img src="duorou.jpg" class="plant-img" alt="多肉植物" onerror="this.src='https://via.placeholder.com/400x250?text=多肉植物'">
+                        </div>
+                        <div class="plant-content">
+                            <h3 class="text-success mb-3">多肉植物</h3>
+                            <p class="text-muted">多肉植物是一类茎、叶或根能够贮存水分的植物，具有独特的形态和较强的耐旱性。它们通常生长在干旱或半干旱地区，是室内盆栽的理想选择。</p>
+                            <div class="care-guide">
+                                <h4 class="text-success mb-3"><i class="fas fa-tools"></i> 养护指南</h4>
+                                <ul class="list-unstyled">
+                                    <li class="mb-2"><i class="fas fa-sun"></i>光照：需要充足的阳光，每天至少4-6小时</li>
+                                    <li class="mb-2"><i class="fas fa-tint"></i>浇水：保持土壤干燥，避免积水</li>
+                                    <li class="mb-2"><i class="fas fa-temperature-low"></i>温度：适宜温度15-28℃</li>
+                                    <li class="mb-2"><i class="fas fa-seedling"></i>土壤：使用排水良好的多肉专用土</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 植物2：绿萝 -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="plant-card card border-0 shadow-sm">
+                        <div class="plant-img-container">
+                            <img src="lvluo.jpg" class="plant-img" alt="绿萝" onerror="this.src='https://via.placeholder.com/400x250?text=绿萝'">
+                        </div>
+                        <div class="plant-content">
+                            <h3 class="text-success mb-3">绿萝</h3>
+                            <p class="text-muted">绿萝是一种常见的室内观叶植物，具有心形的绿叶和较强的空气净化能力。它可以攀援生长，适合放置在室内光线明亮的地方。</p>
+                            <div class="care-guide">
+                                <h4 class="text-success mb-3"><i class="fas fa-tools"></i> 养护指南</h4>
+                                <ul class="list-unstyled">
+                                    <li class="mb-2"><i class="fas fa-sun"></i>光照：喜欢明亮的散射光，避免阳光直射</li>
+                                    <li class="mb-2"><i class="fas fa-tint"></i>浇水：保持土壤湿润，避免积水</li>
+                                    <li class="mb-2"><i class="fas fa-temperature-low"></i>温度：适宜温度18-30℃</li>
+                                    <li class="mb-2"><i class="fas fa-seedling"></i>土壤：使用疏松肥沃的腐叶土</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 植物3：发财树 -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="plant-card card border-0 shadow-sm">
+                        <div class="plant-img-container">
+                            <img src="facaishu.jpg" class="plant-img" alt="发财树" onerror="this.src='https://via.placeholder.com/400x250?text=发财树'">
+                        </div>
+                        <div class="plant-content">
+                            <h3 class="text-success mb-3">发财树</h3>
+                            <p class="text-muted">发财树是一种常见的室内观叶植物，象征着财富和好运。它具有掌状复叶，树干粗壮，适合放置在客厅或办公室等场所。</p>
+                            <div class="care-guide">
+                                <h4 class="text-success mb-3"><i class="fas fa-tools"></i> 养护指南</h4>
+                                <ul class="list-unstyled">
+                                    <li class="mb-2"><i class="fas fa-sun"></i>光照：喜欢明亮的散射光，耐阴性较强</li>
+                                    <li class="mb-2"><i class="fas fa-tint"></i>浇水：保持土壤微干，避免积水</li>
+                                    <li class="mb-2"><i class="fas fa-temperature-low"></i>温度：适宜温度18-30℃</li>
+                                    <li class="mb-2"><i class="fas fa-seedling"></i>土壤：使用疏松肥沃的沙壤土</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 植物4：蝴蝶兰 -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="plant-card card border-0 shadow-sm">
+                        <div class="plant-img-container">
+                            <img src="hudielan.jpg" class="plant-img" alt="蝴蝶兰" onerror="this.src='https://via.placeholder.com/400x250?text=蝴蝶兰'">
+                        </div>
+                        <div class="plant-content">
+                            <h3 class="text-success mb-3">蝴蝶兰</h3>
+                            <p class="text-muted">蝴蝶兰是一种名贵的兰科植物，因其花朵形似蝴蝶而得名。它具有优雅的花形和丰富的花色，是室内观赏花卉的佳品。</p>
+                            <div class="care-guide">
+                                <h4 class="text-success mb-3"><i class="fas fa-tools"></i> 养护指南</h4>
+                                <ul class="list-unstyled">
+                                    <li class="mb-2"><i class="fas fa-sun"></i>光照：喜欢明亮的散射光，避免阳光直射</li>
+                                    <li class="mb-2"><i class="fas fa-tint"></i>浇水：保持基质湿润，避免积水</li>
+                                    <li class="mb-2"><i class="fas fa-temperature-low"></i>温度：适宜温度18-30℃</li>
+                                    <li class="mb-2"><i class="fas fa-seedling"></i>土壤：使用透气的兰花专用基质</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 植物5：龟背竹 -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="plant-card card border-0 shadow-sm">
+                        <div class="plant-img-container">
+                            <img src="guibeizhu.jpg" class="plant-img" alt="龟背竹" onerror="this.src='https://via.placeholder.com/400x250?text=龟背竹'">
+                        </div>
+                        <div class="plant-content">
+                            <h3 class="text-success mb-3">龟背竹</h3>
+                            <p class="text-muted">龟背竹是一种大型观叶植物，因其叶片形状似龟背而得名。它具有独特的孔洞叶片和较强的空气净化能力，是室内绿化的理想选择。</p>
+                            <div class="care-guide">
+                                <h4 class="text-success mb-3"><i class="fas fa-tools"></i> 养护指南</h4>
+                                <ul class="list-unstyled">
+                                    <li class="mb-2"><i class="fas fa-sun"></i>光照：喜欢明亮的散射光，耐阴性较强</li>
+                                    <li class="mb-2"><i class="fas fa-tint"></i>浇水：保持土壤湿润，避免积水</li>
+                                    <li class="mb-2"><i class="fas fa-temperature-low"></i>温度：适宜温度20-30℃</li>
+                                    <li class="mb-2"><i class="fas fa-seedling"></i>土壤：使用疏松肥沃的腐叶土</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- 页脚 -->
+    <footer class="bg-success text-white py-4">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2026 智禾方隅</p>
+            <p class="small mb-0">探索植物的奥秘，享受种植的乐趣</p>
+        </div>
+    </footer>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

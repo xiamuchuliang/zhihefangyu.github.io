@@ -1,0 +1,1932 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI种植管家 - 智能农业技术分享社区</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 自定义CSS -->
+    <style>
+        /* 基础样式 */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* 新的顶部导航样式 - 对应图二 */
+        .top-nav {
+            border-bottom: 1px solid #e5e7eb;
+            background-color: #ffffff;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            color: #65a30d;
+            /* 叶子图标绿色 */
+            font-size: 18px;
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333333;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #666666;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: #333333;
+            font-weight: 500;
+        }
+
+        /* 主要内容区 */
+        .main-content {
+            min-height: 80vh;
+            padding: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* 发帖卡片 */
+        .post-card {
+            border-radius: 8px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .post-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* 评论区 */
+        .comment-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        /* 社群规则页 */
+        .rules-section {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* AI助手卡片样式 */
+        .ai-assistant-card {
+            background: linear-gradient(135deg, #e8f4f8 0%, #f0f8fb 100%);
+            border: 1px solid #dee2e6;
+        }
+
+        /* AI状态指示器样式 */
+        .ai-status {
+            border-left: 4px solid #28a745;
+            transition: all 0.3s ease;
+        }
+
+        .ai-status.thinking {
+            border-left-color: #007bff;
+            background-color: #e3f2fd !important;
+        }
+
+        /* 快速问题按钮样式 */
+        .quick-question-btn {
+            font-size: 12px;
+            padding: 4px 8px;
+            margin: 2px;
+            transition: all 0.2s ease;
+        }
+
+        .quick-question-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* AI回答区域样式 */
+        #aiAnswerContent {
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        /* 置信度徽章样式 */
+        #aiConfidence {
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* 反馈按钮样式 */
+        .feedback-btn {
+            font-size: 12px;
+            padding: 4px 8px;
+            transition: all 0.2s ease;
+        }
+
+        .feedback-btn:hover:not(.disabled) {
+            transform: scale(1.05);
+        }
+
+        .feedback-btn.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* AI历史记录样式 */
+        .ai-history-list {
+            scrollbar-width: thin;
+            scrollbar-color: #ccc #f1f1f1;
+        }
+
+        .ai-history-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .ai-history-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 2px;
+        }
+
+        .ai-history-list::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 2px;
+        }
+
+        /* 图片预览样式 */
+        #aiImagePreview img {
+            transition: transform 0.2s ease;
+        }
+
+        #aiImagePreview img:hover {
+            transform: scale(1.05);
+        }
+
+        /* 紧急程度按钮样式 */
+        .btn-check:checked+.btn-outline-success {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+
+        .btn-check:checked+.btn-outline-warning {
+            background-color: #ffc107;
+            border-color: #ffc107;
+            color: #000;
+        }
+
+        .btn-check:checked+.btn-outline-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        /* 语音播报按钮动画 */
+        #aiSpeakBtn:hover {
+            transform: scale(1.1);
+        }
+
+        /* 标签样式 */
+        #aiTags .badge {
+            font-size: 11px;
+            margin: 2px;
+        }
+
+        /* 推荐问题样式 */
+        #aiRecommendations .btn {
+            font-size: 11px;
+            padding: 2px 6px;
+        }
+
+        /* ========== 新增/修改：右侧帖子滚动区域样式 ========== */
+        .posts-scroll-container {
+            max-height: 700px;
+            /* 设置固定高度，可根据需要调整 */
+            overflow-y: auto;
+            /* 垂直滚动 */
+            overflow-x: hidden;
+            /* 隐藏水平滚动 */
+            padding-right: 8px;
+            /* 给滚动条留出空间 */
+            /* 自定义滚动条样式（美化） */
+        }
+
+        /* 自定义滚动条 - Chrome/Safari */
+        .posts-scroll-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .posts-scroll-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .posts-scroll-container::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 3px;
+        }
+
+        .posts-scroll-container::-webkit-scrollbar-thumb:hover {
+            background: #999;
+        }
+
+        /* 自定义滚动条 - Firefox */
+        .posts-scroll-container {
+            scrollbar-width: thin;
+            scrollbar-color: #ccc #f1f1f1;
+        }
+
+        /* ========== 滚动区域样式结束 ========== */
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .post-form {
+                margin-bottom: 2rem;
+            }
+
+            .top-nav {
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+            }
+
+            .nav-links {
+                gap: 16px;
+            }
+
+            /* 移动端调整滚动高度 */
+            .posts-scroll-container {
+                max-height: 500px;
+            }
+        }
+
+        /* 动画效果 */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 自定义类 */
+        .top-20 {
+            top: 5rem;
+        }
+
+        /* 点赞动画 */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .pulse {
+            animation: pulse 0.5s ease-in-out;
+        }
+
+        /* AI问答按钮样式 */
+        .ai-ask-btn {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+            transition: all 0.3s;
+        }
+
+        .ai-ask-btn:hover {
+            background-color: #0b5ed7;
+            border-color: #0a58ca;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 新的顶部导航栏 - 替换原有蓝色导航 -->
+    <div class="top-nav">
+        <div class="logo-section">
+            <i class="fas fa-leaf logo-icon"></i>
+            <span class="logo-text">AI 种植管家</span>
+        </div>
+        <div class="nav-links">
+            <a class="nav-link" href="shouye.html#features">功能介绍</a>
+            <a class="nav-link" href="cunchu.html">云端日志</a>
+            <a class="nav-link" href="community.html">技术社区</a>
+        </div>
+    </div>
+
+    <!-- 主要内容区 -->
+    <div class="main-content" id="community">
+        <div class="row">
+            <!-- 左侧：发帖区域 + AI助手 -->
+            <div class="col-lg-4 mb-4">
+                <!-- AI智能助手卡片 -->
+                <div class="card post-card ai-assistant-card fade-in mb-4" id="ai-assistant">
+                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0"><i class="fas fa-brain text-primary"></i> AI种植智能助手</h4>
+                        <div class="d-flex gap-2">
+                            <span class="badge bg-success">在线</span>
+                            <span class="badge bg-info" id="aiAccuracy">准确率 95.2%</span>
+                            <span class="badge bg-warning text-dark" id="cloudLogCount" title="云端诊断记录数量">
+                                <i class="fas fa-cloud"></i> 0
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- AI状态指示器 -->
+                        <div class="ai-status mb-3 p-2 bg-light rounded">
+                            <div class="d-flex align-items-center">
+                                <div class="spinner-grow spinner-grow-sm text-success me-2" role="status"
+                                    id="aiStatusIndicator" style="display: none;">
+                                    <span class="visually-hidden">AI思考中...</span>
+                                </div>
+                                <small class="text-muted" id="aiStatusText">AI管家随时为您服务 🌱</small>
+                            </div>
+                        </div>
+
+                        <!-- 快速问题推荐 -->
+                        <div class="quick-questions mb-3" id="quickQuestions">
+                            <h6 class="text-muted mb-2"><i class="fas fa-lightbulb"></i> 热门问题</h6>
+                            <div class="d-flex flex-wrap gap-1">
+                                <button class="btn btn-sm btn-outline-secondary quick-question-btn">番茄黄叶怎么办？</button>
+                                <button class="btn btn-sm btn-outline-secondary quick-question-btn">如何防治霜霉病？</button>
+                                <button class="btn btn-sm btn-outline-secondary quick-question-btn">阳台种植草莓技巧</button>
+                                <button class="btn btn-sm btn-outline-secondary quick-question-btn">有机肥如何使用？</button>
+                            </div>
+                        </div>
+
+                        <p class="text-muted mb-3">
+                            <i class="fas fa-robot"></i> 基于深度学习的植物健康诊断系统，拥有10万+病例数据库
+                        </p>
+
+                        <form id="aiAskForm">
+                            <div class="mb-3">
+                                <label for="aiQuestion" class="form-label">
+                                    <i class="fas fa-comment-dots"></i> 描述您的种植问题
+                                </label>
+                                <textarea class="form-control" id="aiQuestion" rows="3"
+                                    placeholder="详细描述症状、环境条件、管理措施等信息，AI将为您提供更精准的诊断..." required></textarea>
+                                <div class="form-text">
+                                    💡 提示：上传植物照片可提高诊断准确率
+                                </div>
+                            </div>
+
+                            <!-- 图片上传区域 -->
+                            <div class="mb-3">
+                                <label for="aiImages" class="form-label">
+                                    <i class="fas fa-camera"></i> 上传植物照片（可选）
+                                </label>
+                                <input type="file" class="form-control" id="aiImages" multiple accept="image/*" max="3">
+                                <div id="aiImagePreview" class="d-flex flex-wrap gap-2 mt-2"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="aiExpertise" class="form-label">
+                                    <i class="fas fa-cogs"></i> 专业领域
+                                </label>
+                                <select class="form-select" id="aiExpertise">
+                                    <option value="diagnosis">🔍 病虫害诊断</option>
+                                    <option value="cultivation">🌱 种植技术指导</option>
+                                    <option value="fertilizer">🧪 施肥方案推荐</option>
+                                    <option value="environment">🌡️ 环境调控建议</option>
+                                    <option value="harvest">📦 采收与储存指导</option>
+                                </select>
+                            </div>
+
+                            <!-- 紧急程度选择 -->
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    <i class="fas fa-exclamation-triangle"></i> 紧急程度
+                                </label>
+                                <div class="btn-group w-100" role="group">
+                                    <input type="radio" class="btn-check" name="urgency" id="urgency1" value="low"
+                                        checked>
+                                    <label class="btn btn-outline-success" for="urgency1">一般咨询</label>
+
+                                    <input type="radio" class="btn-check" name="urgency" id="urgency2" value="medium">
+                                    <label class="btn btn-outline-warning" for="urgency2">需要关注</label>
+
+                                    <input type="radio" class="btn-check" name="urgency" id="urgency3" value="high">
+                                    <label class="btn btn-outline-danger" for="urgency3">紧急处理</label>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn ai-ask-btn text-white w-100" id="aiSubmitBtn">
+                                <i class="fas fa-robot"></i> 向AI管家提问
+                            </button>
+                        </form>
+
+                        <!-- AI回答展示区 - 增强版 -->
+                        <div id="aiAnswerContainer" class="mt-4 d-none">
+                            <div class="card bg-white border">
+                                <div
+                                    class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                                    <h6 class="mb-0"><i class="fas fa-comment-dots"></i> AI管家诊断报告</h6>
+                                    <div class="d-flex gap-2">
+                                        <span class="badge bg-light text-dark" id="aiConfidence">置信度: --</span>
+                                        <button class="btn btn-sm btn-outline-light" id="aiSpeakBtn" title="语音播报">
+                                            <i class="fas fa-volume-up"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div id="aiAnswerContent" class="mb-3"></div>
+
+                                    <!-- 相关标签 -->
+                                    <div id="aiTags" class="mb-3"></div>
+
+                                    <!-- 用户反馈区域 -->
+                                    <div class="ai-feedback border-top pt-3">
+                                        <h6 class="text-muted mb-2">这个回答对您有帮助吗？</h6>
+                                        <div class="d-flex gap-2 mb-2">
+                                            <button class="btn btn-sm btn-outline-success feedback-btn" data-rating="5">
+                                                <i class="fas fa-thumbs-up"></i> 很有帮助
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-warning feedback-btn" data-rating="3">
+                                                <i class="fas fa-meh"></i> 一般
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger feedback-btn" data-rating="1">
+                                                <i class="fas fa-thumbs-down"></i> 需要改进
+                                            </button>
+                                        </div>
+                                        <div id="feedbackMessage" class="text-muted small"></div>
+                                    </div>
+
+                                    <!-- 相关推荐 -->
+                                    <div class="ai-recommendations mt-3 border-top pt-3">
+                                        <h6 class="text-muted mb-2"><i class="fas fa-lightbulb"></i> 相关建议</h6>
+                                        <div id="aiRecommendations" class="d-flex flex-wrap gap-1"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- AI对话历史 -->
+                        <div class="ai-history mt-3" id="aiHistoryContainer" style="display: none;">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6 class="text-muted mb-0"><i class="fas fa-history"></i> 对话历史</h6>
+                                <div class="d-flex gap-1">
+                                    <button class="btn btn-sm btn-outline-secondary" id="toggleHistoryBtn">
+                                        <i class="fas fa-eye"></i> 查看历史
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-primary" id="viewCloudLogsBtn"
+                                        title="查看云端诊断记录">
+                                        <i class="fas fa-cloud"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-success" id="exportLogsBtn" title="导出诊断记录">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="aiHistoryList" class="ai-history-list"
+                                style="max-height: 200px; overflow-y: auto;"></div>
+
+                            <!-- 云端日志快速预览 -->
+                            <div id="cloudLogPreview" class="mt-2 p-2 bg-light rounded" style="display: none;">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <small class="text-muted"><i class="fas fa-cloud"></i> 最近云端记录</small>
+                                    <small class="text-muted" id="cloudLogTime">--</small>
+                                </div>
+                                <div id="cloudLogContent" class="small text-muted"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 发帖区域 -->
+                <div class="card post-card fade-in">
+                    <div class="card-header bg-light">
+                        <h4 class="mb-0"><i class="fas fa-edit"></i> 分享AI种植技术经验</h4>
+                    </div>
+                    <div class="card-body">
+                        <form id="postForm" class="post-form">
+                            <div class="mb-3">
+                                <label for="postTitle" class="form-label">标题</label>
+                                <input type="text" class="form-control" id="postTitle" placeholder="请输入分享标题" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="postContent" class="form-label">内容</label>
+                                <textarea class="form-control" id="postContent" rows="4"
+                                    placeholder="分享你的AI种植技术经验、智能设备使用心得..." required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="postCategory" class="form-label">分类</label>
+                                <select class="form-select" id="postCategory">
+                                    <option value="ai-diagnosis">AI病虫害诊断</option>
+                                    <option value="smart-monitor">智能环境监测</option>
+                                    <option value="auto-irrigation">自动灌溉系统</option>
+                                    <option value="data-analysis">种植数据分析</option>
+                                    <option value="ai-fertilizer">AI施肥推荐</option>
+                                    <option value="iot-device">物联网设备使用</option>
+                                    <option value="question">问题求助</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="postFiles" class="form-label">上传图片/数据文件</label>
+                                <input type="file" class="form-control" id="postFiles" multiple
+                                    accept="image/*,.pdf,.doc,.docx,.txt,.csv">
+                                <small class="form-text text-muted">支持上传图片和文档/数据文件，最多5个文件</small>
+                            </div>
+                            <div class="mb-3">
+                                <div id="filePreview" class="d-flex flex-wrap gap-2 mt-2"></div>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-paper-plane"></i> 发布分享
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧：帖子展示区 -->
+            <div class="col-lg-8">
+                <div class="card post-card fade-in">
+                    <div class="card-header bg-light">
+                        <h4 class="mb-0"><i class="fas fa-th-list"></i> AI种植技术分享</h4>
+                    </div>
+                    <div class="card-body p-0"> <!-- 移除默认padding避免滚动条错位 -->
+                        <!-- ========== 修改：添加滚动容器 ========== -->
+                        <div id="postsContainer" class="posts-list posts-scroll-container p-4"></div>
+                        <!-- ========== 滚动容器结束 ========== -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col text-center">
+                    <p class="mb-0">© 2026 智禾方隅 - 智能农业技术分享社区 | 基于 Bootstrap 5 构建</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 评论模态框 -->
+    <div class="modal fade" id="commentModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-comments"></i> 评论交流</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="modalPostTitle" class="h5 mb-4"></div>
+                    <div id="modalPostContent" class="mb-4 text-muted"></div>
+                    <hr>
+                    <h6 class="mb-3">评论列表</h6>
+                    <div id="commentList" class="comment-list mb-4"></div>
+                    <form id="commentForm">
+                        <div class="mb-3">
+                            <input type="hidden" id="commentPostId">
+                            <textarea class="form-control" id="commentContent" rows="3" placeholder="分享你的AI种植经验或提出问题..."
+                                required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-reply"></i> 发表评论
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- 自定义JavaScript -->
+    <script>
+        // 模拟AI种植相关帖子数据
+        let posts = [
+            {
+                id: 1,
+                title: "AI图像识别在番茄病虫害诊断中的应用",
+                content: "我使用基于深度学习的AI图像识别系统来诊断番茄病虫害，准确率达到95%以上。系统可以识别早疫病、晚疫病、叶霉病、蚜虫等18种常见病虫害，通过手机拍照即可实时诊断，并给出对应的防治方案。具体实现：1. 收集5000+张病虫害图片作为训练集；2. 使用YOLOv8模型进行训练；3. 部署到移动端，响应时间小于2秒。",
+                category: "ai-diagnosis",
+                author: "AI农业工程师",
+                date: "2024-02-01 10:00",
+                likes: 45,
+                comments: [
+                    { id: 1, author: "智能种植爱好者", content: "请问这个模型需要什么配置的硬件才能运行？普通手机可以吗？", date: "2024-02-01 10:30" },
+                    { id: 2, author: "农场技术员", content: "我们农场也想引入这套系统，请问数据标注是自己做还是有现成的数据集？", date: "2024-02-01 11:00" }
+                ]
+            },
+            {
+                id: 2,
+                title: "基于物联网和AI的智能灌溉系统搭建教程",
+                content: "分享我搭建的智能灌溉系统：1. 硬件部分：ESP32开发板 + 土壤湿度传感器 + 温度传感器 + 电磁阀；2. 软件部分：使用Python编写AI算法，根据土壤湿度、温度、未来7天天气预报自动计算灌溉量和灌溉时间；3. 部署：通过MQTT协议实现远程控制，可在手机APP上查看数据和手动控制；4. 效果：相比传统灌溉节水35%，作物产量提升18%。",
+                category: "auto-irrigation",
+                author: "智能农业创客",
+                date: "2024-02-05 14:00",
+                likes: 68,
+                comments: [
+                    { id: 3, author: "阳台种植新手", content: "请问这套系统的成本大概是多少？适合阳台小面积种植吗？", date: "2024-02-05 14:30" },
+                    { id: 4, author: "技术达人", content: "推荐使用TensorFlow Lite在ESP32上运行轻量化模型，功耗更低，响应更快。", date: "2024-02-05 15:00" }
+                ]
+            },
+            {
+                id: 3,
+                title: "AI数据分析优化草莓种植环境参数",
+                content: "通过收集1年的草莓种植环境数据（温度、湿度、光照、CO2浓度）和产量数据，使用机器学习算法建立了产量预测模型。模型分析得出：1. 最适生长温度：白天22-25℃，夜间10-12℃；2. 空气湿度保持在60-70%；3. 光照时长每天12-14小时；4. CO2浓度控制在800-1000ppm。调整后，畸形果率从15%降至5%，单产提升22%。",
+                category: "data-analysis",
+                author: "农业数据分析师",
+                date: "2024-02-10 09:00",
+                likes: 39,
+                comments: []
+            }
+        ];
+
+        // AI智能助手知识库 - 增强版
+        const aiKnowledgeBase = {
+            // 病虫害诊断专家系统
+            diagnosis: {
+                "番茄黄叶": {
+                    answer: "🔍 AI诊断分析：番茄黄叶症状分析\n\n📊 可能原因排查：\n1. 营养缺乏（60%概率）：\n   • 缺氮：老叶从下往上黄化，叶脉保持绿色\n   • 缺镁：叶脉间黄化，呈网状花纹\n   • 缺铁：新叶黄化，叶脉仍绿\n\n2. 水分管理问题（25%概率）：\n   • 过湿：根系缺氧，叶片萎黄\n   • 干旱：叶片失水黄化卷曲\n\n3. 病害感染（10%概率）：\n   • 叶霉病：叶背有霉层\n   • 病毒病：花叶、畸形\n\n4. 环境胁迫（5%概率）：\n   • 温度过高/过低\n   • 光照不足\n\n🎯 AI推荐解决方案：\n• 立即检测：土壤EC值、pH值、含水量\n• 叶片检测：拍照上传AI图像识别系统\n• 应急处理：调整浇水频率，补充叶面肥\n• 预防措施：安装环境监测传感器",
+                    confidence: 0.92,
+                    tags: ["番茄", "黄叶", "营养缺乏", "病害诊断"]
+                },
+                "黄瓜霜霉病": {
+                    answer: "🦠 AI病害识别：黄瓜霜霉病综合防治方案\n\n📈 发病条件分析：\n• 温度：15-22℃最适宜\n• 湿度：>85%高风险\n• 通风：不良加重发病\n\n🛡️ 智能防治策略：\n1. 环境调控（优先级★★★）：\n   • AI控制湿度<80%\n   • 智能通风系统启动\n   • 温度控制在25-28℃\n\n2. 生物防治（优先级★★）：\n   • 枯草芽孢杆菌喷施\n   • 木霉菌土壤处理\n\n3. 化学防治（必要时）：\n   • 预防：代森锰锌600倍液\n   • 治疗：烯酰吗啉1000倍液\n\n4. AI预警系统：\n   • 环境数据实时监测\n   • 发病风险智能评估\n   • 提前3-5天预警提醒\n\n📱 建议启用：霜霉病AI预警模块",
+                    confidence: 0.95,
+                    tags: ["黄瓜", "霜霉病", "环境调控", "生物防治"]
+                },
+                "叶片发黄": {
+                    answer: "🌿 AI叶片健康分析系统\n\n🔬 症状特征识别：\n请描述更多细节以提高诊断精度：\n• 黄化部位：老叶/新叶/全株？\n• 黄化模式：均匀/斑点/叶脉间？\n• 伴随症状：萎蔫/斑点/卷曲？\n• 发生时间：突然/渐进？\n\n🤖 AI建议操作：\n1. 拍照上传：使用植物医生AI识别\n2. 环境检测：温湿度、光照强度\n3. 土壤检测：NPK、pH、EC值\n4. 水质检测：盐分、重金属\n\n📊 常见原因概率分析：\n• 营养不良：45%\n• 水分问题：30%\n• 病虫害：15%\n• 环境胁迫：10%",
+                    confidence: 0.85,
+                    tags: ["叶片", "黄化", "诊断", "AI识别"]
+                },
+                default: "🤖 AI植物医生正在分析中...\n\n基于深度学习的植物健康诊断系统为您提供专业建议：\n\n🔍 问题分析流程：\n1. 症状特征提取与分析\n2. 环境因子关联性评估\n3. 病虫害数据库匹配\n4. 营养状况智能判断\n\n💡 建议操作：\n• 详细描述症状特征\n• 上传高清植物照片\n• 提供种植环境信息\n• 记录近期管理措施\n\n📈 AI将基于10万+病例数据库，为您提供95%+准确率的诊断结果和个性化解决方案。"
+            },
+
+            // 种植技术指导专家系统
+            cultivation: {
+                "阳台种植草莓": {
+                    answer: "🍓 AI阳台草莓种植优化方案\n\n🎯 品种智能推荐：\n• 四季草莓：红颜、章姬、白雪公主\n• 适应性评分：根据阳台朝向和气候\n• 产量预测：单株年产量150-300g\n\n🏠 容器配置方案：\n• 推荐规格：直径≥30cm，深度≥25cm\n• 材质选择：透气陶盆或加厚塑料盆\n• 排水系统：底部多孔+陶粒层\n\n🌱 AI种植管理：\n1. 光照管理：\n   • 自然光照：6-8小时/天\n   • 补光方案：LED植物灯12-14小时\n   • 智能调节：根据季节自动调整\n\n2. 水肥一体化：\n   • 滴灌系统：定时定量浇水\n   • 营养液配比：NPK 20-10-20\n   • EC值控制：1.2-1.8mS/cm\n\n3. 环境调控：\n   • 温度：15-25℃最适宜\n   • 湿度：60-70%\n   • 通风：避免闷热环境\n\n📱 推荐使用：草莓种植AI助手APP",
+                    confidence: 0.93,
+                    tags: ["草莓", "阳台种植", "容器栽培", "AI管理"]
+                },
+                "番茄种植": {
+                    answer: "🍅 AI番茄种植全程指导\n\n🌟 品种选择算法：\n• 根据种植面积、气候条件、市场需求\n• 推荐品种：樱桃番茄、牛心番茄、粉果番茄\n• 抗病性评级：高抗TMV、叶霉病品种优先\n\n🌱 育苗期管理：\n• 播种时间：AI根据当地气候推荐\n• 温度控制：白天25-28℃，夜间15-18℃\n• 光照补充：LED补光14-16小时\n\n🏗️ 栽培架构：\n• 株距：30-40cm（根据品种调整）\n• 支架系统：V型或单干整枝\n• 密度优化：AI计算最佳种植密度\n\n💧 智能灌溉：\n• 土壤湿度传感器监控\n• 分阶段水分管理\n• 滴灌+叶面喷雾结合\n\n🍃 整枝打杈：\n• AI识别侧芽位置\n• 最佳打杈时机提醒\n• 留果数量智能建议",
+                    confidence: 0.91,
+                    tags: ["番茄", "全程管理", "品种选择", "智能灌溉"]
+                },
+                default: "🌱 AI种植技术专家为您服务\n\n🎯 个性化种植方案：\n• 根据您的种植环境、经验水平、目标产量\n• 提供从选种到收获的全程技术指导\n• 结合物联网设备实现智能化管理\n\n📊 技术支持范围：\n• 品种选择与搭配\n• 育苗技术优化\n• 田间管理标准化\n• 病虫害综合防治\n• 采收与储存技术\n\n🤖 AI优势：\n• 24小时在线咨询\n• 基于大数据的精准建议\n• 个性化解决方案\n• 实时问题诊断"
+            },
+
+            // 施肥专家系统
+            fertilizer: {
+                "有机肥使用": {
+                    answer: "🌿 AI有机肥智能配方系统\n\n🧪 有机肥成分分析：\n• 腐熟度检测：C/N比≤20:1\n• 养分含量：NPK + 微量元素\n• 有害物质：重金属、病原菌检测\n\n📈 施用量智能计算：\n• 基础用量：2-3kg/m²\n• 作物需求系数调整\n• 土壤肥力状况修正\n• 季节性用量优化\n\n⏰ 最佳施用时机：\n• 基肥：种植前15-20天\n• 追肥：生长关键期\n• 叶面肥：早晨或傍晚\n\n🔄 发酵技术指导：\n• 堆肥配比：碳氮比30:1\n• 发酵周期：45-60天\n• 翻堆频率：7-10天一次\n• 温度控制：50-65℃\n\n💡 AI建议：\n• 建立有机肥发酵监测系统\n• 定期检测土壤有机质含量\n• 结合生物菌剂提高效果",
+                    confidence: 0.89,
+                    tags: ["有机肥", "发酵技术", "施用量", "土壤改良"]
+                },
+                default: "🧪 AI精准施肥专家系统\n\n📊 施肥方案制定流程：\n1. 土壤检测：NPK、pH、有机质、微量元素\n2. 作物需求：生长阶段、品种特性、目标产量\n3. 环境因子：温度、湿度、光照、降雨\n4. 经济效益：肥料成本、预期收益分析\n\n🎯 智能推荐功能：\n• 基肥、追肥、叶面肥配比\n• 施用时间和频率优化\n• 不同生长期营养调整\n• 缺素症状预警与纠正\n\n📱 配套工具：\n• 施肥计算器\n• 营养诊断系统\n• 肥效监测平台"
+            },
+
+            // 环境调控专家系统
+            environment: {
+                "温室环境控制": {
+                    answer: "🏠 AI温室环境智能调控系统\n\n🌡️ 温度管理策略：\n• 分区控制：根据作物生长阶段设定\n• 昼夜温差：保持8-12℃温差促进养分积累\n• 季节调节：春秋季自然通风，夏冬季机械调控\n\n💨 通风系统优化：\n• 自然通风：顶窗+侧窗联动\n• 强制通风：风机+湿帘降温\n• 智能控制：CO2浓度+温湿度联动\n\n💧 湿度精准调控：\n• 目标范围：60-80%（根据作物调整）\n• 除湿方案：通风+加热除湿\n• 加湿方案：微喷+超声波加湿\n\n☀️ 光照补充系统：\n• LED光谱配比：红蓝光3:1\n• 补光时长：根据自然光照自动调节\n• 光周期控制：促进开花结果\n\n🌱 CO2施肥：\n• 浓度控制：800-1200ppm\n• 施放时机：光照充足时段\n• 经济效益：增产15-30%\n\n📊 AI优化算法：\n• 多参数协同控制\n• 能耗成本最小化\n• 作物生长模型预测",
+                    confidence: 0.94,
+                    tags: ["温室", "环境控制", "智能调控", "节能优化"]
+                },
+                default: "🌍 AI环境调控专家系统\n\n🎛️ 智能监测网络：\n• 多点位传感器布局\n• 实时数据采集与分析\n• 异常情况自动报警\n• 历史数据趋势分析\n\n⚙️ 自动化控制：\n• 温湿度联动调节\n• 光照强度智能补充\n• 通风系统优化运行\n• 灌溉系统精准控制\n\n📈 效益分析：\n• 能耗优化：降低20-30%\n• 产量提升：增加15-25%\n• 品质改善：提高商品率\n• 人工节省：减少50%管理时间"
+            },
+
+            // 采收储存专家系统
+            harvest: {
+                "果蔬采收时机": {
+                    answer: "🍎 AI采收时机智能判断系统\n\n🔍 成熟度识别技术：\n• 计算机视觉：颜色、形状、大小分析\n• 光谱检测：糖度、酸度、硬度测定\n• 无损检测：内部品质评估\n\n⏰ 最佳采收时间：\n• 叶菜类：清晨露水干后\n• 果菜类：果实8-9成熟\n• 根茎类：地上部开始枯黄\n\n📊 采收标准制定：\n• 外观指标：色泽、光泽、形状\n• 内在品质：糖度、酸度、维C含量\n• 商品性：大小均匀、无病虫害\n\n🚚 采后处理流程：\n1. 预冷处理：快速降温至适宜温度\n2. 清洗分级：去除杂质，按规格分类\n3. 包装保鲜：选择适宜包装材料\n4. 储存运输：控制温湿度条件\n\n📱 AI辅助工具：\n• 成熟度检测APP\n• 采收计划制定\n• 储存条件监控\n• 货架期预测",
+                    confidence: 0.90,
+                    tags: ["采收", "成熟度", "储存", "品质检测"]
+                },
+                default: "📦 AI采收储存专家指导\n\n🎯 采收优化方案：\n• 成熟度智能判断\n• 采收时机精准预测\n• 采收方法标准化\n• 采后处理流程化\n\n🏪 储存保鲜技术：\n• 最适储存条件设定\n• 保鲜技术选择\n• 货架期延长方案\n• 损耗率控制措施\n\n📈 经济效益分析：\n• 采收成本核算\n• 储存损耗评估\n• 销售时机优化\n• 利润最大化策略"
+            }
+        };
+
+        // AI对话历史记录
+        let aiChatHistory = [];
+
+        // AI学习和优化系统
+        const aiLearningSystem = {
+            userFeedback: [],
+            popularQuestions: {},
+            accuracyStats: {},
+
+            // 记录用户反馈
+            recordFeedback: function (question, answer, rating) {
+                this.userFeedback.push({
+                    question: question,
+                    answer: answer,
+                    rating: rating,
+                    timestamp: new Date().toISOString()
+                });
+            },
+
+            // 更新热门问题
+            updatePopularQuestions: function (question) {
+                if (this.popularQuestions[question]) {
+                    this.popularQuestions[question]++;
+                } else {
+                    this.popularQuestions[question] = 1;
+                }
+            },
+
+            // 获取推荐问题
+            getRecommendedQuestions: function () {
+                const sorted = Object.entries(this.popularQuestions)
+                    .sort(([, a], [, b]) => b - a)
+                    .slice(0, 5);
+                return sorted.map(([question]) => question);
+            }
+        };
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function () {
+            renderPosts();
+            setupEventListeners();
+            initializeAiAssistant();
+        });
+
+        // 初始化AI助手
+        function initializeAiAssistant() {
+            // 设置初始状态
+            updateAiStatus('ready', 'AI管家随时为您服务 🌱');
+
+            // 加载历史记录（如果有的话）
+            if (aiChatHistory.length > 0) {
+                document.getElementById('aiHistoryContainer').style.display = 'block';
+                updateHistoryDisplay();
+            }
+
+            // 初始化云端日志统计
+            updateCloudLogStats();
+            showLatestCloudLog();
+
+            // 设置准确率动画
+            animateAccuracy();
+
+            // 定期更新快速问题推荐和云端日志统计
+            setInterval(updateQuickQuestions, 30000); // 每30秒更新一次
+            setInterval(updateCloudLogStats, 60000); // 每分钟更新云端日志统计
+        }
+
+        // 准确率动画效果
+        function animateAccuracy() {
+            const accuracyElement = document.getElementById('aiAccuracy');
+            let currentAccuracy = 85.0;
+            const targetAccuracy = 95.2;
+            const increment = 0.1;
+
+            const animation = setInterval(() => {
+                currentAccuracy += increment;
+                accuracyElement.textContent = `准确率 ${currentAccuracy.toFixed(1)}%`;
+
+                if (currentAccuracy >= targetAccuracy) {
+                    clearInterval(animation);
+                    accuracyElement.textContent = `准确率 ${targetAccuracy}%`;
+                }
+            }, 50);
+        }
+
+        // 渲染帖子列表
+        function renderPosts() {
+            const postsContainer = document.getElementById('postsContainer');
+            postsContainer.innerHTML = '';
+
+            posts.forEach(post => {
+                const postElement = createPostElement(post);
+                postsContainer.appendChild(postElement);
+            });
+        }
+
+        // 创建帖子元素
+        function createPostElement(post) {
+            const postDiv = document.createElement('div');
+            postDiv.className = 'card mb-4';
+            postDiv.setAttribute('data-post-id', post.id);
+
+            // 分类标签样式
+            const categoryClass = getCategoryClass(post.category);
+            const categoryName = getCategoryName(post.category);
+
+            // 附件HTML
+            let attachmentsHtml = '';
+            if (post.attachments && post.attachments.length > 0) {
+                attachmentsHtml = `
+                    <div class="mt-3">
+                        <h6 class="text-muted mb-2"><i class="fas fa-paperclip"></i> 附件</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                `;
+
+                post.attachments.forEach(attachment => {
+                    if (attachment.type.startsWith('image/')) {
+                        // 图片附件
+                        attachmentsHtml += `
+                            <div class="attachment-image">
+                                <img src="https://via.placeholder.com/150" alt="${attachment.name}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;">
+                                <p class="text-xs text-muted mt-1 text-center" style="font-size: 12px;">${attachment.name}</p>
+                            </div>
+                        `;
+                    } else if (attachment.type === 'text/csv' || attachment.name.endsWith('.csv')) {
+                        // 数据文件
+                        attachmentsHtml += `
+                            <div class="attachment-file" style="width: 100px; text-align: center;">
+                                <div style="width: 100px; height: 100px; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center; background-color: #f8f9fa;">
+                                    <i class="fas fa-chart-bar" style="font-size: 32px; color: #0d6efd;"></i>
+                                </div>
+                                <p class="text-xs text-muted mt-1" style="font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${attachment.name}</p>
+                            </div>
+                        `;
+                    } else {
+                        // 文档附件
+                        attachmentsHtml += `
+                            <div class="attachment-file" style="width: 100px; text-align: center;">
+                                <div style="width: 100px; height: 100px; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center; background-color: #f8f9fa;">
+                                    <i class="fas fa-file-alt" style="font-size: 32px; color: #6c757d;"></i>
+                                </div>
+                                <p class="text-xs text-muted mt-1" style="font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${attachment.name}</p>
+                            </div>
+                        `;
+                    }
+                });
+
+                attachmentsHtml += `
+                        </div>
+                    </div>
+                `;
+            }
+
+            postDiv.innerHTML = `
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="card-title">${post.title}</h5>
+                        <span class="badge ${categoryClass}">${categoryName}</span>
+                    </div>
+                    <p class="card-text mb-3">${post.content}</p>
+                    ${attachmentsHtml}
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="text-muted small">
+                            <span><i class="fas fa-user"></i> ${post.author}</span>
+                            <span class="mx-2"><i class="fas fa-clock"></i> ${post.date}</span>
+                        </div>
+                        <div class="d-flex gap-3">
+                            <button class="btn btn-sm btn-outline-primary like-btn">
+                                <i class="fas fa-thumbs-up"></i> <span>${post.likes}</span>
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary comment-btn" data-bs-toggle="modal" data-bs-target="#commentModal" data-post-id="${post.id}">
+                                <i class="fas fa-comment"></i> ${post.comments.length}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            return postDiv;
+        }
+
+        // 获取分类样式
+        function getCategoryClass(category) {
+            const classes = {
+                'ai-diagnosis': 'bg-danger',
+                'smart-monitor': 'bg-info',
+                'auto-irrigation': 'bg-success',
+                'data-analysis': 'bg-primary',
+                'ai-fertilizer': 'bg-warning',
+                'iot-device': 'bg-dark',
+                'question': 'bg-secondary'
+            };
+            return classes[category] || 'bg-secondary';
+        }
+
+        // 获取分类名称
+        function getCategoryName(category) {
+            const names = {
+                'ai-diagnosis': 'AI病虫害诊断',
+                'smart-monitor': '智能环境监测',
+                'auto-irrigation': '自动灌溉系统',
+                'data-analysis': '种植数据分析',
+                'ai-fertilizer': 'AI施肥推荐',
+                'iot-device': '物联网设备使用',
+                'question': '问题求助'
+            };
+            return names[category] || '综合讨论';
+        }
+
+        // 设置事件监听器
+        function setupEventListeners() {
+            // 文件上传预览
+            document.getElementById('postFiles').addEventListener('change', function (e) {
+                previewFiles(e.target.files);
+            });
+
+            // AI图片上传预览
+            document.getElementById('aiImages').addEventListener('change', function (e) {
+                previewAiImages(e.target.files);
+            });
+
+            // 发帖表单提交
+            document.getElementById('postForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                submitPost();
+            });
+
+            // 评论表单提交
+            document.getElementById('commentForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                submitComment();
+            });
+
+            // AI提问表单提交
+            document.getElementById('aiAskForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                submitAiQuestion();
+            });
+
+            // 评论按钮点击
+            document.addEventListener('click', function (e) {
+                if (e.target.closest('.comment-btn')) {
+                    const btn = e.target.closest('.comment-btn');
+                    const postId = parseInt(btn.dataset.postId);
+                    openCommentModal(postId);
+                }
+            });
+
+            // 点赞按钮点击
+            document.addEventListener('click', function (e) {
+                if (e.target.closest('.like-btn')) {
+                    const btn = e.target.closest('.like-btn');
+                    const postElement = btn.closest('[data-post-id]');
+                    const postId = parseInt(postElement.dataset.postId);
+                    toggleLike(postId, btn);
+                }
+            });
+
+            // 快速问题按钮点击
+            document.addEventListener('click', function (e) {
+                if (e.target.closest('.quick-question-btn')) {
+                    const btn = e.target.closest('.quick-question-btn');
+                    const question = btn.textContent.trim();
+                    document.getElementById('aiQuestion').value = question;
+
+                    // 自动滚动到问题输入框
+                    document.getElementById('aiQuestion').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    document.getElementById('aiQuestion').focus();
+                }
+            });
+
+            // 用户反馈按钮点击
+            document.addEventListener('click', function (e) {
+                if (e.target.closest('.feedback-btn')) {
+                    const btn = e.target.closest('.feedback-btn');
+                    const rating = parseInt(btn.dataset.rating);
+                    const feedbackMessage = document.getElementById('feedbackMessage');
+
+                    // 记录反馈
+                    const lastQuestion = aiChatHistory.length > 0 ? aiChatHistory[0].question : '';
+                    const lastAnswer = aiChatHistory.length > 0 ? aiChatHistory[0].answer : '';
+                    aiLearningSystem.recordFeedback(lastQuestion, lastAnswer, rating);
+
+                    // 显示反馈消息
+                    const messages = {
+                        5: '感谢您的反馈！AI管家会继续努力提供更好的服务。',
+                        3: '感谢您的反馈！我们会持续改进AI诊断系统。',
+                        1: '感谢您的反馈！请您提供更多详细信息，帮助我们改进。'
+                    };
+
+                    feedbackMessage.textContent = messages[rating];
+                    feedbackMessage.className = `text-${rating >= 4 ? 'success' : rating >= 3 ? 'warning' : 'danger'} small`;
+
+                    // 禁用所有反馈按钮
+                    document.querySelectorAll('.feedback-btn').forEach(btn => {
+                        btn.disabled = true;
+                        btn.classList.add('disabled');
+                    });
+                }
+            });
+
+            // 语音播报按钮点击
+            document.addEventListener('click', function (e) {
+                if (e.target.closest('#aiSpeakBtn')) {
+                    const answerContent = document.getElementById('aiAnswerContent').textContent;
+                    if ('speechSynthesis' in window && answerContent) {
+                        const utterance = new SpeechSynthesisUtterance(answerContent);
+                        utterance.lang = 'zh-CN';
+                        utterance.rate = 0.8;
+                        speechSynthesis.speak(utterance);
+
+                        showToast('开始语音播报...', 'info');
+                    } else {
+                        showToast('您的浏览器不支持语音播报功能', 'warning');
+                    }
+                }
+            });
+
+            // 历史记录切换按钮
+            document.addEventListener('click', function (e) {
+                if (e.target.closest('#toggleHistoryBtn')) {
+                    const historyList = document.getElementById('aiHistoryList');
+                    const btn = e.target.closest('#toggleHistoryBtn');
+
+                    if (historyList.style.display === 'none' || !historyList.style.display) {
+                        historyList.style.display = 'block';
+                        btn.innerHTML = '<i class="fas fa-eye-slash"></i> 隐藏历史';
+                    } else {
+                        historyList.style.display = 'none';
+                        btn.innerHTML = '<i class="fas fa-eye"></i> 查看历史';
+                    }
+                }
+            });
+
+            // 查看云端日志按钮
+            document.addEventListener('click', function (e) {
+                if (e.target.closest('#viewCloudLogsBtn')) {
+                    // 跳转到云端日志页面
+                    window.open('cunchu.html', '_blank');
+                }
+            });
+
+            // 导出诊断记录按钮
+            document.addEventListener('click', function (e) {
+                if (e.target.closest('#exportLogsBtn')) {
+                    exportCloudLogs();
+                }
+            });
+        }
+
+        // 文件预览函数
+        function previewFiles(files) {
+            const previewContainer = document.getElementById('filePreview');
+            previewContainer.innerHTML = '';
+
+            if (files.length === 0) return;
+
+            // 限制最多5个文件
+            const validFiles = Array.from(files).slice(0, 5);
+
+            validFiles.forEach(file => {
+                const filePreview = document.createElement('div');
+                filePreview.className = 'file-preview-item';
+                filePreview.style.position = 'relative';
+                filePreview.style.width = '100px';
+                filePreview.style.height = '100px';
+                filePreview.style.border = '1px solid #ddd';
+                filePreview.style.borderRadius = '4px';
+                filePreview.style.overflow = 'hidden';
+                filePreview.style.display = 'flex';
+                filePreview.style.alignItems = 'center';
+                filePreview.style.justifyContent = 'center';
+
+                if (file.type.startsWith('image/')) {
+                    // 图片预览
+                    const img = document.createElement('img');
+                    img.src = URL.createObjectURL(file);
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.objectFit = 'cover';
+                    filePreview.appendChild(img);
+                } else if (file.type === 'text/csv' || file.name.endsWith('.csv')) {
+                    // 数据文件预览
+                    const icon = document.createElement('div');
+                    icon.className = 'file-icon';
+                    icon.style.fontSize = '32px';
+                    icon.style.color = '#0d6efd';
+                    icon.innerHTML = '<i class="fas fa-chart-bar"></i>';
+                    filePreview.appendChild(icon);
+                } else {
+                    // 文档预览
+                    const icon = document.createElement('div');
+                    icon.className = 'file-icon';
+                    icon.style.fontSize = '32px';
+                    icon.style.color = '#6c757d';
+                    icon.innerHTML = '<i class="fas fa-file-alt"></i>';
+                    filePreview.appendChild(icon);
+                }
+
+                // 文件名
+                const fileName = document.createElement('div');
+                fileName.className = 'file-name';
+                fileName.style.position = 'absolute';
+                fileName.style.bottom = '0';
+                fileName.style.left = '0';
+                fileName.style.right = '0';
+                fileName.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+                fileName.style.color = 'white';
+                fileName.style.padding = '2px 4px';
+                fileName.style.fontSize = '10px';
+                fileName.style.textAlign = 'center';
+                fileName.style.whiteSpace = 'nowrap';
+                fileName.style.overflow = 'hidden';
+                fileName.style.textOverflow = 'ellipsis';
+                fileName.textContent = file.name;
+                filePreview.appendChild(fileName);
+
+                previewContainer.appendChild(filePreview);
+            });
+        }
+
+        // 提交新帖子
+        function submitPost() {
+            const title = document.getElementById('postTitle').value;
+            const content = document.getElementById('postContent').value;
+            const category = document.getElementById('postCategory').value;
+            const fileInput = document.getElementById('postFiles');
+
+            // 获取上传的文件
+            const files = Array.from(fileInput.files).slice(0, 5);
+            const attachments = files.map(file => ({
+                name: file.name,
+                type: file.type,
+                size: file.size
+            }));
+
+            // 创建新帖子对象
+            const newPost = {
+                id: Date.now(),
+                title: title,
+                content: content,
+                category: category,
+                author: "AI种植爱好者",
+                date: new Date().toLocaleString(),
+                likes: 0,
+                comments: [],
+                attachments: attachments
+            };
+
+            // 添加到帖子列表
+            posts.unshift(newPost);
+
+            // 重新渲染帖子列表
+            renderPosts();
+
+            // 重置表单
+            document.getElementById('postForm').reset();
+            document.getElementById('filePreview').innerHTML = '';
+
+            // 显示成功提示
+            showToast('AI种植经验分享发布成功！', 'primary');
+        }
+
+        // 提交AI问题
+        // 增强版AI问题提交函数
+        function submitAiQuestion() {
+            const question = document.getElementById('aiQuestion').value.trim();
+            const expertise = document.getElementById('aiExpertise').value;
+            const urgency = document.querySelector('input[name="urgency"]:checked').value;
+            const images = document.getElementById('aiImages').files;
+
+            if (!question) return;
+
+            // 更新AI状态
+            updateAiStatus('thinking', 'AI管家正在深度分析您的问题...');
+
+            // 禁用提交按钮
+            const submitBtn = document.getElementById('aiSubmitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> AI分析中...';
+
+            // 记录问题到学习系统
+            aiLearningSystem.updatePopularQuestions(question);
+
+            // 模拟AI分析延迟（根据紧急程度调整）
+            const analysisTime = urgency === 'high' ? 1000 : urgency === 'medium' ? 1500 : 2000;
+
+            setTimeout(() => {
+                // 获取AI回答
+                const aiResponse = getAiResponse(question, expertise, urgency, images.length > 0);
+
+                // 显示AI回答
+                displayAiAnswer(aiResponse, question);
+
+                // 重置状态
+                updateAiStatus('ready', 'AI管家随时为您服务 🌱');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-robot"></i> 向AI管家提问';
+
+                // 添加到对话历史
+                addToAiHistory(question, aiResponse);
+
+                // 更新快速问题推荐
+                updateQuickQuestions();
+
+            }, analysisTime);
+        }
+
+        // 获取AI回答的增强函数
+        function getAiResponse(question, expertise, urgency, hasImages) {
+            let response = {
+                answer: '',
+                confidence: 0.85,
+                tags: [],
+                recommendations: []
+            };
+
+            // 根据专业领域查找回答
+            const expertiseData = aiKnowledgeBase[expertise];
+            if (expertiseData) {
+                // 查找最匹配的回答
+                let bestMatch = null;
+                let bestScore = 0;
+
+                for (const [key, data] of Object.entries(expertiseData)) {
+                    if (key === 'default') continue;
+
+                    // 简单的关键词匹配算法
+                    const keywords = key.split(/[，。、\s]+/);
+                    let score = 0;
+                    keywords.forEach(keyword => {
+                        if (question.includes(keyword)) {
+                            score += keyword.length;
+                        }
+                    });
+
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestMatch = data;
+                    }
+                }
+
+                if (bestMatch) {
+                    response.answer = bestMatch.answer;
+                    response.confidence = bestMatch.confidence || 0.85;
+                    response.tags = bestMatch.tags || [];
+                } else {
+                    response.answer = expertiseData.default || "基于AI种植管家的分析，针对您的问题，建议进行详细的现场诊断和数据采集。";
+                    response.answer = response.answer.replace('{问题}', question);
+                }
+            } else {
+                response.answer = "抱歉，暂时无法识别您的问题类型。请提供更详细的信息，或选择合适的专业领域。";
+                response.confidence = 0.3;
+            }
+
+            // 根据紧急程度调整回答
+            if (urgency === 'high') {
+                response.answer = "⚠️ 紧急情况处理建议：\n\n" + response.answer + "\n\n🚨 建议立即采取行动，如问题严重请咨询当地农技专家。";
+                response.confidence = Math.min(response.confidence + 0.1, 0.98);
+            }
+
+            // 如果有图片，提高置信度
+            if (hasImages) {
+                response.answer += "\n\n📸 已检测到您上传的图片，AI正在进行图像分析以提供更精准的诊断...";
+                response.confidence = Math.min(response.confidence + 0.05, 0.98);
+            }
+
+            // 生成相关推荐
+            response.recommendations = generateRecommendations(expertise, question);
+
+            return response;
+        }
+
+        // 显示AI回答的增强函数
+        function displayAiAnswer(aiResponse, originalQuestion) {
+            const answerContainer = document.getElementById('aiAnswerContainer');
+            const answerContent = document.getElementById('aiAnswerContent');
+            const confidenceElement = document.getElementById('aiConfidence');
+            const tagsContainer = document.getElementById('aiTags');
+            const recommendationsContainer = document.getElementById('aiRecommendations');
+
+            // 设置回答内容（支持换行格式）
+            answerContent.innerHTML = aiResponse.answer.replace(/\n/g, '<br>');
+
+            // 设置置信度
+            const confidencePercent = Math.round(aiResponse.confidence * 100);
+            confidenceElement.textContent = `置信度: ${confidencePercent}%`;
+            confidenceElement.className = `badge ${confidencePercent >= 90 ? 'bg-success' : confidencePercent >= 70 ? 'bg-warning' : 'bg-danger'} text-white`;
+
+            // 显示标签
+            if (aiResponse.tags && aiResponse.tags.length > 0) {
+                tagsContainer.innerHTML = '<h6 class="text-muted mb-2"><i class="fas fa-tags"></i> 相关标签</h6>';
+                const tagsHtml = aiResponse.tags.map(tag =>
+                    `<span class="badge bg-secondary me-1">${tag}</span>`
+                ).join('');
+                tagsContainer.innerHTML += `<div>${tagsHtml}</div>`;
+            } else {
+                tagsContainer.innerHTML = '';
+            }
+
+            // 显示推荐
+            if (aiResponse.recommendations && aiResponse.recommendations.length > 0) {
+                const recommendationsHtml = aiResponse.recommendations.map(rec =>
+                    `<button class="btn btn-sm btn-outline-info me-1 mb-1 quick-question-btn">${rec}</button>`
+                ).join('');
+                recommendationsContainer.innerHTML = recommendationsHtml;
+            }
+
+            // 显示容器
+            answerContainer.classList.remove('d-none');
+
+            // 滚动到回答区域
+            answerContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+            // 显示成功提示
+            const urgency = document.querySelector('input[name="urgency"]:checked').value;
+            const toastType = urgency === 'high' ? 'warning' : 'success';
+            showToast('AI管家已为您提供专业诊断建议！', toastType);
+        }
+
+        // 生成相关推荐
+        function generateRecommendations(expertise, question) {
+            const recommendations = {
+                diagnosis: [
+                    "如何预防病虫害？",
+                    "植物营养缺乏症状",
+                    "有机防治方法",
+                    "环境因子影响"
+                ],
+                cultivation: [
+                    "最佳种植时间",
+                    "土壤改良方法",
+                    "水肥管理技巧",
+                    "整枝修剪要点"
+                ],
+                fertilizer: [
+                    "有机肥制作方法",
+                    "叶面肥使用技巧",
+                    "土壤检测方法",
+                    "缺素症状识别"
+                ],
+                environment: [
+                    "温室管理要点",
+                    "光照补充方案",
+                    "通风系统设计",
+                    "湿度控制方法"
+                ],
+                harvest: [
+                    "成熟度判断标准",
+                    "采收工具选择",
+                    "储存保鲜技术",
+                    "包装运输要点"
+                ]
+            };
+
+            return recommendations[expertise] || recommendations.diagnosis;
+        }
+
+        // 更新AI状态
+        function updateAiStatus(status, message) {
+            const indicator = document.getElementById('aiStatusIndicator');
+            const statusText = document.getElementById('aiStatusText');
+
+            if (status === 'thinking') {
+                indicator.style.display = 'block';
+                statusText.textContent = message;
+                statusText.className = 'text-primary';
+            } else {
+                indicator.style.display = 'none';
+                statusText.textContent = message;
+                statusText.className = 'text-muted';
+            }
+        }
+
+        // 添加到AI对话历史并保存到云端日志
+        function addToAiHistory(question, response) {
+            const historyItem = {
+                id: Date.now(),
+                question: question,
+                answer: response.answer,
+                confidence: response.confidence,
+                timestamp: new Date().toLocaleString(),
+                tags: response.tags
+            };
+
+            aiChatHistory.unshift(historyItem);
+
+            // 限制历史记录数量
+            if (aiChatHistory.length > 10) {
+                aiChatHistory = aiChatHistory.slice(0, 10);
+            }
+
+            // 保存到云端日志
+            saveToCloudLog(question, response);
+
+            // 显示历史记录容器
+            document.getElementById('aiHistoryContainer').style.display = 'block';
+
+            // 更新历史记录显示
+            updateHistoryDisplay();
+        }
+
+        // 保存AI诊断记录到云端日志
+        function saveToCloudLog(question, response) {
+            // 获取当前选择的专业领域和紧急程度
+            const expertise = document.getElementById('aiExpertise').value;
+            const urgency = document.querySelector('input[name="urgency"]:checked')?.value || 'low';
+            const images = document.getElementById('aiImages').files;
+
+            // 生成唯一ID
+            const logId = generateLogId();
+
+            // 确定诊断类型
+            const typeMapping = {
+                'diagnosis': 'disease',
+                'cultivation': 'cultivation',
+                'fertilizer': 'fertilizer',
+                'environment': 'environment',
+                'harvest': 'harvest'
+            };
+
+            const typeNameMapping = {
+                'diagnosis': 'AI病虫害诊断',
+                'cultivation': 'AI种植技术指导',
+                'fertilizer': 'AI施肥方案推荐',
+                'environment': 'AI环境调控建议',
+                'harvest': 'AI采收储存指导'
+            };
+
+            // 构建云端日志数据
+            const cloudLogData = {
+                id: logId,
+                type: typeMapping[expertise] || 'diagnosis',
+                typeName: typeNameMapping[expertise] || 'AI智能诊断',
+                cropName: extractCropName(question) || '未指定作物',
+                createTime: new Date().toLocaleString(),
+                updateTime: new Date().toLocaleString(),
+                status: 'processed',
+                statusName: '已处理',
+                urgency: urgency,
+                urgencyName: getUrgencyName(urgency),
+                inputData: {
+                    question: question,
+                    expertise: expertise,
+                    urgency: urgency,
+                    hasImages: images.length > 0,
+                    imageCount: images.length,
+                    userAgent: navigator.userAgent,
+                    timestamp: new Date().toISOString()
+                },
+                aiResult: {
+                    diagnosis: response.answer,
+                    confidence: `${Math.round(response.confidence * 100)}%`,
+                    tags: response.tags || [],
+                    recommendations: response.recommendations || [],
+                    processingTime: getProcessingTime(urgency),
+                    score: Math.round(response.confidence * 100)
+                }
+            };
+
+            // 保存到本地存储（模拟云端保存）
+            saveToLocalStorage(cloudLogData);
+
+            // 显示保存成功提示
+            showCloudSaveNotification(logId);
+        }
+
+        // 生成日志ID
+        function generateLogId() {
+            const now = new Date();
+            const dateStr = now.toISOString().slice(0, 10).replace(/-/g, '');
+            const timeStr = now.getTime().toString().slice(-6);
+            return `AI${dateStr}${timeStr}`;
+        }
+
+        // 从问题中提取作物名称
+        function extractCropName(question) {
+            const crops = ['番茄', '黄瓜', '草莓', '茄子', '辣椒', '白菜', '萝卜', '胡萝卜', '菠菜', '生菜', '韭菜', '大蒜', '洋葱', '土豆', '玉米', '大豆', '水稻', '小麦'];
+
+            for (const crop of crops) {
+                if (question.includes(crop)) {
+                    return crop;
+                }
+            }
+
+            // 如果没有找到具体作物，尝试通过关键词推断
+            if (question.includes('阳台') || question.includes('盆栽')) {
+                return '阳台作物';
+            } else if (question.includes('温室') || question.includes('大棚')) {
+                return '温室作物';
+            }
+
+            return '综合作物';
+        }
+
+        // 获取紧急程度名称
+        function getUrgencyName(urgency) {
+            const names = {
+                'low': '一般咨询',
+                'medium': '需要关注',
+                'high': '紧急处理'
+            };
+            return names[urgency] || '一般咨询';
+        }
+
+        // 获取处理时间（模拟）
+        function getProcessingTime(urgency) {
+            const times = {
+                'high': '1.2秒',
+                'medium': '1.8秒',
+                'low': '2.3秒'
+            };
+            return times[urgency] || '2.0秒';
+        }
+
+        // 保存到本地存储（模拟云端存储）
+        function saveToLocalStorage(logData) {
+            try {
+                // 获取现有的云端日志数据
+                let existingLogs = JSON.parse(localStorage.getItem('aiDiagnosisLogs') || '[]');
+
+                // 添加新的日志记录
+                existingLogs.unshift(logData);
+
+                // 限制存储数量（最多保存100条记录）
+                if (existingLogs.length > 100) {
+                    existingLogs = existingLogs.slice(0, 100);
+                }
+
+                // 保存到本地存储
+                localStorage.setItem('aiDiagnosisLogs', JSON.stringify(existingLogs));
+
+                // 更新云端日志统计和预览
+                updateCloudLogStats();
+                showLatestCloudLog();
+
+            } catch (error) {
+                console.error('保存云端日志失败:', error);
+                showToast('云端日志保存失败，请检查存储空间', 'warning');
+            }
+        }
+
+        // 显示云端保存通知
+        function showCloudSaveNotification(logId) {
+            // 创建保存成功的通知
+            const notification = document.createElement('div');
+            notification.className = 'alert alert-success alert-dismissible fade show position-fixed';
+            notification.style.cssText = 'top: 80px; right: 20px; z-index: 1050; min-width: 300px;';
+            notification.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-cloud-upload-alt me-2"></i>
+                    <div>
+                        <strong>云端保存成功</strong><br>
+                        <small class="text-muted">诊断记录ID: ${logId}</small>
+                    </div>
+                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+
+            document.body.appendChild(notification);
+
+            // 3秒后自动移除
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 3000);
+        }
+
+        // 更新云端日志统计
+        function updateCloudLogStats() {
+            try {
+                const logs = JSON.parse(localStorage.getItem('aiDiagnosisLogs') || '[]');
+                const totalCount = logs.length;
+
+                // 更新页面上的统计显示（如果存在）
+                const statsElement = document.getElementById('cloudLogCount');
+                if (statsElement) {
+                    statsElement.innerHTML = `<i class="fas fa-cloud"></i> ${totalCount}`;
+                    statsElement.title = `云端诊断记录: ${totalCount} 条`;
+                }
+
+                // 在控制台显示统计信息
+                console.log(`云端日志统计: 总计 ${totalCount} 条AI诊断记录`);
+
+            } catch (error) {
+                console.error('更新云端日志统计失败:', error);
+            }
+        }
+
+        // 显示最新的云端日志预览
+        function showLatestCloudLog() {
+            try {
+                const logs = JSON.parse(localStorage.getItem('aiDiagnosisLogs') || '[]');
+                const previewContainer = document.getElementById('cloudLogPreview');
+                const contentElement = document.getElementById('cloudLogContent');
+                const timeElement = document.getElementById('cloudLogTime');
+
+                if (logs.length > 0 && previewContainer && contentElement && timeElement) {
+                    const latestLog = logs[0];
+
+                    // 显示最新记录的简要信息
+                    contentElement.innerHTML = `
+                        <div class="d-flex justify-content-between">
+                            <span>${latestLog.typeName}</span>
+                            <span class="badge bg-secondary">${latestLog.cropName}</span>
+                        </div>
+                        <div class="mt-1 text-truncate" style="max-width: 200px;">
+                            ${latestLog.inputData.question.substring(0, 30)}...
+                        </div>
+                    `;
+
+                    timeElement.textContent = latestLog.createTime;
+                    previewContainer.style.display = 'block';
+                } else if (previewContainer) {
+                    previewContainer.style.display = 'none';
+                }
+
+            } catch (error) {
+                console.error('显示最新云端日志失败:', error);
+            }
+        }
+
+        // 获取云端日志数据（供其他页面调用）
+        function getCloudLogData() {
+            try {
+                return JSON.parse(localStorage.getItem('aiDiagnosisLogs') || '[]');
+            } catch (error) {
+                console.error('获取云端日志数据失败:', error);
+                return [];
+            }
+        }
+
+        // 导出云端日志数据
+        function exportCloudLogs() {
+            try {
+                const logs = getCloudLogData();
+                if (logs.length === 0) {
+                    showToast('暂无AI诊断记录可导出', 'info');
+                    return;
+                }
+
+                const dataStr = JSON.stringify(logs, null, 2);
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(dataBlob);
+                link.download = `AI诊断记录_${new Date().toISOString().slice(0, 10)}.json`;
+                link.click();
+
+                showToast(`成功导出 ${logs.length} 条AI诊断记录`, 'success');
+
+            } catch (error) {
+                console.error('导出云端日志失败:', error);
+                showToast('导出失败，请重试', 'danger');
+            }
+        }
+
+        // 更新历史记录显示
+        function updateHistoryDisplay() {
+            const historyList = document.getElementById('aiHistoryList');
+
+            if (aiChatHistory.length === 0) {
+                historyList.innerHTML = '<p class="text-muted small">暂无对话历史</p>';
+                return;
+            }
+
+            const historyHtml = aiChatHistory.map(item => `
+                <div class="card mb-2 border-light">
+                    <div class="card-body p-2">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <small class="text-primary fw-bold">Q: ${item.question.substring(0, 30)}${item.question.length > 30 ? '...' : ''}</small>
+                            <small class="text-muted">${item.timestamp}</small>
+                        </div>
+                        <small class="text-muted">A: ${item.answer.substring(0, 50)}${item.answer.length > 50 ? '...' : ''}</small>
+                        <div class="mt-1">
+                            <span class="badge bg-info text-white" style="font-size: 10px;">置信度: ${Math.round(item.confidence * 100)}%</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            historyList.innerHTML = historyHtml;
+        }
+
+        // 更新快速问题推荐
+        function updateQuickQuestions() {
+            const recommended = aiLearningSystem.getRecommendedQuestions();
+            if (recommended.length > 0) {
+                const quickQuestionsContainer = document.querySelector('#quickQuestions .d-flex');
+                const newButtons = recommended.slice(0, 4).map(question =>
+                    `<button class="btn btn-sm btn-outline-secondary quick-question-btn">${question}</button>`
+                ).join('');
+                quickQuestionsContainer.innerHTML = newButtons;
+            }
+        }
+
+        // 图片预览功能
+        function previewAiImages(files) {
+            const previewContainer = document.getElementById('aiImagePreview');
+            previewContainer.innerHTML = '';
+
+            if (files.length === 0) return;
+
+            Array.from(files).slice(0, 3).forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const imgContainer = document.createElement('div');
+                    imgContainer.className = 'position-relative';
+                    imgContainer.style.width = '80px';
+                    imgContainer.style.height = '80px';
+
+                    const img = document.createElement('img');
+                    img.src = URL.createObjectURL(file);
+                    img.className = 'img-thumbnail';
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.objectFit = 'cover';
+
+                    const badge = document.createElement('span');
+                    badge.className = 'position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success';
+                    badge.innerHTML = '<i class="fas fa-check" style="font-size: 8px;"></i>';
+
+                    imgContainer.appendChild(img);
+                    imgContainer.appendChild(badge);
+                    previewContainer.appendChild(imgContainer);
+                }
+            });
+        }
+
+        // 打开评论模态框
+        function openCommentModal(postId) {
+            const post = posts.find(p => p.id === postId);
+            if (!post) return;
+
+            // 填充模态框内容
+            document.getElementById('modalPostTitle').textContent = post.title;
+            document.getElementById('modalPostContent').textContent = post.content;
+            document.getElementById('commentPostId').value = post.id;
+
+            // 渲染评论列表
+            renderComments(post.comments);
+        }
+
+        // 渲染评论列表
+        function renderComments(comments) {
+            const commentList = document.getElementById('commentList');
+            commentList.innerHTML = '';
+
+            if (comments.length === 0) {
+                commentList.innerHTML = '<p class="text-muted">暂无评论，快来分享你的AI种植经验吧！</p>';
+                return;
+            }
+
+            comments.forEach(comment => {
+                const commentElement = createCommentElement(comment);
+                commentList.appendChild(commentElement);
+            });
+        }
+
+        // 创建评论元素
+        function createCommentElement(comment) {
+            const commentDiv = document.createElement('div');
+            commentDiv.className = 'card mb-2';
+            commentDiv.innerHTML = `
+                <div class="card-body p-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <h6 class="card-subtitle mb-1 text-primary">${comment.author}</h6>
+                        <span class="text-muted small">${comment.date}</span>
+                    </div>
+                    <p class="card-text mb-0">${comment.content}</p>
+                </div>
+            `;
+            return commentDiv;
+        }
+
+        // 提交评论
+        function submitComment() {
+            const postId = parseInt(document.getElementById('commentPostId').value);
+            const content = document.getElementById('commentContent').value;
+
+            // 查找帖子
+            const post = posts.find(p => p.id === postId);
+            if (!post) return;
+
+            // 创建新评论
+            const newComment = {
+                id: Date.now(),
+                author: "AI种植爱好者",
+                content: content,
+                date: new Date().toLocaleString()
+            };
+
+            // 添加到评论列表
+            post.comments.push(newComment);
+
+            // 更新评论计数
+            updateCommentCount(postId);
+
+            // 重新渲染评论列表
+            renderComments(post.comments);
+
+            // 重置评论表单
+            document.getElementById('commentContent').value = '';
+
+            // 显示成功提示
+            showToast('评论发表成功！', 'primary');
+        }
+
+        // 更新评论计数
+        function updateCommentCount(postId) {
+            const postElement = document.querySelector(`[data-post-id="${postId}"]`);
+            if (!postElement) return;
+
+            const commentBtn = postElement.querySelector('.comment-btn');
+            const post = posts.find(p => p.id === postId);
+            if (commentBtn && post) {
+                const commentCount = post.comments.length;
+                commentBtn.innerHTML = `<i class="fas fa-comment"></i> ${commentCount}`;
+            }
+        }
+
+        // 切换点赞状态
+        function toggleLike(postId, btn) {
+            const post = posts.find(p => p.id === postId);
+            if (!post) return;
+
+            // 增加点赞数
+            post.likes++;
+
+            // 更新UI
+            const likeCountElement = btn.querySelector('span');
+            likeCountElement.textContent = post.likes;
+
+            // 添加点赞动画
+            btn.classList.add('btn-primary');
+            btn.classList.remove('btn-outline-primary');
+            btn.classList.add('pulse');
+            setTimeout(() => {
+                btn.classList.remove('pulse');
+            }, 1000);
+        }
+
+        // 显示提示信息
+        function showToast(message, type = 'info') {
+            // 检查是否已存在toast容器
+            let toastContainer = document.getElementById('toastContainer');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'toastContainer';
+                toastContainer.className = 'toast-container position-fixed top-20 end-0 p-3';
+                document.body.appendChild(toastContainer);
+            }
+
+            // 创建toast元素
+            const toastId = 'toast-' + Date.now();
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center text-white bg-${type} border-0`;
+            toast.role = 'alert';
+            toast.ariaLive = 'assertive';
+            toast.ariaAtomic = 'true';
+            toast.id = toastId;
+
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            `;
+
+            // 添加到容器
+            toastContainer.appendChild(toast);
+
+            // 初始化并显示toast
+            const toastInstance = new bootstrap.Toast(toast, {
+                delay: 3000
+            });
+            toastInstance.show();
+
+            // 显示后移除
+            toast.addEventListener('hidden.bs.toast', function () {
+                toast.remove();
+            });
+        }
+    </script>
+</body>
+
+</html>

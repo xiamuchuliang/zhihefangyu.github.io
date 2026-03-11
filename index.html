@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>智禾方隅 —— AI种植管家 链接城乡种苗新生态</title>
+  <!-- Tailwind CSS (与种苗精准匹配系统风格统一) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome 4 (与匹配系统一致) -->
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#16a34a',      // 活力绿
+            secondary: '#0284c7',     // 晴空蓝
+            dark: '#0f172a',
+            light: '#f8fafc'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* 保持与匹配系统一致的微交互 */
+    .card-hover {
+      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: transform;
+      backface-visibility: hidden;
+    }
+    .card-hover:hover {
+      transform: translateY(-4px);
+    }
+    img {
+      content-visibility: auto;
+      background-color: #f3f4f6;
+    }
+    .card-shadow {
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    }
+    /* 导航栏滚动阴影 */
+    .navbar-scrolled {
+      box-shadow: 0 8px 20px rgba(0, 32, 16, 0.1);
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased">
+
+<!-- ========== 导航栏 (与匹配系统类似，保持品牌一致性) ========== -->
+<nav id="mainNav" class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm transition-shadow duration-200">
+  <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+    <!-- 左: 品牌LOGO + 名称 -->
+    <div class="flex items-center gap-2">
+      <i class="fa fa-leaf text-primary text-2xl"></i>
+      <span class="text-xl font-bold text-dark">智禾方隅</span>
+      <span class="hidden sm:inline-block ml-2 text-xs bg-primary/10 text-primary px-3 py-1 rounded-full">智慧农业版</span>
+    </div>
+
+    <!-- 桌面端导航 (为了风格统一，放置几个占位链接) -->
+    <div class="hidden md:flex items-center gap-6 text-gray-600">
+      <a href="#" class="hover:text-primary transition-colors">首页</a>
+      <a href="#" class="hover:text-primary transition-colors">解决方案</a>
+      <a href="#" class="hover:text-primary transition-colors">价格</a>
+      <a href="#" class="hover:text-primary transition-colors">帮助</a>
+    </div>
+
+    <!-- 移动端菜单按钮 (仅图标, 无功能) -->
+    <button id="menuBtn" class="md:hidden text-dark text-2xl">
+      <i class="fa fa-bars"></i>
+    </button>
+  </div>
+</nav>
+
+<!-- ========== 主视觉区 (动态渐变 + 大标语) ========== -->
+<section class="relative overflow-hidden bg-gradient-to-br from-green-50 via-white to-blue-50 py-20 md:py-32">
+  <div class="container mx-auto px-4">
+    <div class="max-w-4xl mx-auto text-center">
+      <!-- 装饰小叶子 -->
+      <div class="flex justify-center gap-2 text-primary/40 text-4xl mb-4">
+        <i class="fa fa-leaf"></i>
+        <i class="fa fa-leaf"></i>
+        <i class="fa fa-leaf"></i>
+      </div>
+      <h1 class="text-4xl md:text-6xl font-extrabold text-gray-800 leading-tight">
+        <span class="text-primary">智禾方隅</span><br>AI种植管家 链接城乡种苗新生态
+      </h1>
+      <p class="text-lg md:text-xl text-gray-600 mt-6 max-w-2xl mx-auto">
+        从智能诊断到精准匹配，让每一株植物都获得专家级照料。<br>农户、园艺爱好者、城市种植者的一站式平台。
+      </p>
+
+      <!-- 三个醒目的大按钮 (核心跳转区域) - 已填充真实链接 -->
+      <div class="flex flex-col sm:flex-row justify-center gap-4 mt-12">
+        <!-- 按钮 1: 智能诊断 (跳转至 data-input.html) -->
+        <a href="shouye.html" 
+           class="group bg-primary hover:bg-primary/90 text-white px-8 py-5 rounded-xl font-bold text-lg shadow-lg shadow-primary/30 flex items-center justify-center gap-3 transition-all card-hover">
+          <i class="fa fa-camera text-2xl"></i>
+          <span>📋 AI 智能诊断</span>
+          <i class="fa fa-arrow-right opacity-0 group-hover:opacity-100 transition-all"></i>
+        </a>
+
+        <!-- 按钮 2: 种苗精准匹配 (跳转至 种苗精准匹配主页面.html) -->
+        <a href="种苗精准匹配主页面.html" 
+           class="group bg-secondary hover:bg-secondary/90 text-white px-8 py-5 rounded-xl font-bold text-lg shadow-lg shadow-secondary/30 flex items-center justify-center gap-3 transition-all card-hover">
+          <i class="fa fa-exchange text-2xl"></i>
+          <span>🌱 种苗精准匹配</span>
+          <i class="fa fa-arrow-right opacity-0 group-hover:opacity-100 transition-all"></i>
+        </a>
+
+        <!-- 按钮 3: 城乡技术社区 (跳转至 种植分区.html) -->
+        <a href="种植分区.html" 
+           class="group bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-5 rounded-xl font-bold text-lg shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-3 transition-all card-hover">
+          <i class="fa fa-users text-2xl"></i>
+          <span>🌾 城乡技术社区</span>
+          <i class="fa fa-arrow-right opacity-0 group-hover:opacity-100 transition-all"></i>
+        </a>
+      </div>
+
+      <!-- 辅助说明: 已移除占位提示 -->
+      <p class="text-sm text-gray-400 mt-6 border-b border-gray-200 pb-2 inline-block">
+        👆 三个核心入口 · 点击即可进入对应服务
+      </p>
+    </div>
+  </div>
+
+  <!-- 底部抽象波浪 (纯装饰) -->
+  <div class="absolute bottom-0 left-0 right-0">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120" fill="#f8fafc" opacity="0.6">
+      <path d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
+    </svg>
+  </div>
+</section>
+
+<!-- ========== 特色功能区 (三张卡片，解释三个按钮对应的服务) ========== -->
+<section class="py-20 bg-white">
+  <div class="container mx-auto px-4">
+    <h2 class="text-3xl md:text-4xl font-bold text-center mb-4">智慧种植三部曲</h2>
+    <p class="text-center text-gray-500 max-w-2xl mx-auto mb-16">只需点击上方按钮，即可进入对应的智能服务模块</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- 卡片1：智能诊断 -->
+      <div class="bg-gray-50 rounded-2xl p-8 card-shadow card-hover border border-gray-100">
+        <div class="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary text-3xl mb-6">
+          <i class="fa fa-stethoscope"></i>
+        </div>
+        <h3 class="text-2xl font-bold mb-3">AI 智能诊断</h3>
+        <p class="text-gray-600 mb-5">上传植物照片，AI自动识别病虫害、缺素、生长异常，生成详细健康报告及专家级养护建议。</p>
+        <div class="flex items-center text-sm text-primary font-medium">
+          <span>集成图像识别 · 百万案例库</span>
+          <i class="fa fa-leaf ml-2 opacity-60"></i>
+        </div>
+      </div>
+
+      <!-- 卡片2：种苗精准匹配 (与匹配系统完美呼应) -->
+      <div class="bg-gray-50 rounded-2xl p-8 card-shadow card-hover border border-gray-100">
+        <div class="w-16 h-16 bg-secondary/10 rounded-2xl flex items-center justify-center text-secondary text-3xl mb-6">
+          <i class="fa fa-filter"></i>
+        </div>
+        <h3 class="text-2xl font-bold mb-3">种苗精准匹配</h3>
+        <p class="text-gray-600 mb-5">根据你的地理位置、土壤气候、种植需求，智能筛选最适宜的品种和优质农户，直接对接产地。</p>
+        <div class="flex items-center text-sm text-secondary font-medium">
+          <span>农户资质核验 · 实时库存</span>
+          <i class="fa fa-truck ml-2 opacity-60"></i>
+        </div>
+      </div>
+
+      <!-- 卡片3：城乡技术社区 (整合种植分区/社区) -->
+      <div class="bg-gray-50 rounded-2xl p-8 card-shadow card-hover border border-gray-100">
+        <div class="w-16 h-16 bg-emerald-600/10 rounded-2xl flex items-center justify-center text-emerald-600 text-3xl mb-6">
+          <i class="fa fa-comments"></i>
+        </div>
+        <h3 class="text-2xl font-bold mb-3">城乡技术社区</h3>
+        <p class="text-gray-600 mb-5">与种植达人、农技专家互动交流，分享经验、查看品种展示、学习养护指南。新手区&特色品种区。</p>
+        <div class="flex items-center text-sm text-emerald-600 font-medium">
+          <span>帖子 · 问答 · 种植分区</span>
+          <i class="fa fa-group ml-2 opacity-60"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- 移除占位提示 -->
+    <div class="mt-12 text-center bg-green-50 border border-green-200 rounded-xl p-4 inline-block mx-auto">
+      <p class="text-green-700 text-sm flex items-center gap-2">
+        <i class="fa fa-check-circle"></i> 所有核心按钮已配置正确跳转链接，可正常访问对应页面。
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 热门推荐 / 种苗预览 (借用了匹配系统里的风格) ========== -->
+<section class="py-16 bg-gradient-to-t from-gray-50 to-white">
+  <div class="container mx-auto px-4">
+    <div class="flex justify-between items-end mb-10">
+      <div>
+        <h2 class="text-3xl font-bold">🔥 热门种苗推荐</h2>
+        <p class="text-gray-500 mt-2">根据近期用户需求智能匹配的热门品种</p>
+      </div>
+      <a href="种苗精准匹配主页面.html#list" class="text-primary hover:underline hidden sm:block">查看全部 <i class="fa fa-arrow-right"></i></a>
+    </div>
+
+    <!-- 种苗卡片网格 (与匹配系统的卡片几乎一致，营造统一感) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <!-- 卡片 1 蝴蝶兰 -->
+      <div class="bg-white rounded-xl card-shadow card-hover overflow-hidden">
+        <div class="aspect-square overflow-hidden bg-gray-100">
+          <img src="https://tse1-mm.cn.bing.net/th/id/OIP-C.os3llzL4Zn9W7Run3ghC-QHaFk?w=270&h=202&c=7&r=0&o=7&dpr=2&pid=1.7&rm=3" 
+               alt="蝴蝶兰" class="w-full h-full object-cover" loading="lazy">
+        </div>
+        <div class="p-4">
+          <div class="flex justify-between">
+            <h3 class="font-bold">蝴蝶兰种苗</h3>
+            <span class="text-primary font-bold">0.8元/株</span>
+          </div>
+          <p class="text-xs text-gray-500 mt-1">纯度98% · 广西农户 · 5000株</p>
+          <div class="flex items-center gap-1 mt-2 text-yellow-500 text-sm">
+            <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i>
+            <span class="text-gray-500 text-xs ml-1">4.8</span>
+          </div>
+        </div>
+      </div>
+      <!-- 卡片 2 腊梅 -->
+      <div class="bg-white rounded-xl card-shadow card-hover overflow-hidden">
+        <div class="aspect-square overflow-hidden bg-gray-100">
+          <img src="https://tse2-mm.cn.bing.net/th/id/OIP-C.dtCq-2K9y52NuXsxgD0rjQHaLG?w=115&h=180&c=7&r=0&o=7&dpr=2&pid=1.7&rm=3" 
+               alt="腊梅" class="w-full h-full object-cover" loading="lazy">
+        </div>
+        <div class="p-4">
+          <div class="flex justify-between">
+            <h3 class="font-bold">腊梅苗</h3>
+            <span class="text-primary font-bold">1.2元/株</span>
+          </div>
+          <p class="text-xs text-gray-500 mt-1">纯度96% · 山东农户 · 3000株</p>
+          <div class="flex items-center gap-1 mt-2 text-yellow-500 text-sm">
+            <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            <span class="text-gray-500 text-xs ml-1">5.0</span>
+          </div>
+        </div>
+      </div>
+      <!-- 卡片 3 多肉 -->
+      <div class="bg-white rounded-xl card-shadow card-hover overflow-hidden">
+        <div class="aspect-square overflow-hidden bg-gray-100">
+          <img src="https://tse1-mm.cn.bing.net/th/id/OIP-C.1NsO3hjkyBaOG4czcfwo4gHaE8?w=270&h=180&c=7&r=0&o=7&dpr=2&pid=1.7&rm=3" 
+               alt="多肉" class="w-full h-full object-cover" loading="lazy">
+        </div>
+        <div class="p-4">
+          <div class="flex justify-between">
+            <h3 class="font-bold">多肉组合</h3>
+            <span class="text-primary font-bold">0.6元/株</span>
+          </div>
+          <p class="text-xs text-gray-500 mt-1">97% · 云南多肉基地 · 8000株</p>
+          <div class="flex items-center gap-1 mt-2 text-yellow-500 text-sm">
+            <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i>
+            <span class="text-gray-500 text-xs ml-1">4.6</span>
+          </div>
+        </div>
+      </div>
+      <!-- 卡片 4 兰花 -->
+      <div class="bg-white rounded-xl card-shadow card-hover overflow-hidden">
+        <div class="aspect-square overflow-hidden bg-gray-100">
+          <img src="https://tse4-mm.cn.bing.net/th/id/OIP-C.ayZbtuKYKCdZQU1mGqa7fwHaHF?w=179&h=180&c=7&r=0&o=7&dpr=2&pid=1.7&rm=3" 
+               alt="兰花" class="w-full h-full object-cover" loading="lazy">
+        </div>
+        <div class="p-4">
+          <div class="flex justify-between">
+            <h3 class="font-bold">建兰·四季兰</h3>
+            <span class="text-primary font-bold">2.5元/株</span>
+          </div>
+          <p class="text-xs text-gray-500 mt-1">纯度99% · 福建兰花圃 · 1200株</p>
+          <div class="flex items-center gap-1 mt-2 text-yellow-500 text-sm">
+            <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i>
+            <span class="text-gray-500 text-xs ml-1">4.9</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 移动端查看全部 (跳转至种苗匹配页面) -->
+    <div class="text-center mt-8 sm:hidden">
+      <a href="种苗精准匹配主页面.html#list" class="inline-block px-6 py-3 border border-primary text-primary rounded-full text-sm">查看更多种苗 <i class="fa fa-arrow-right ml-1"></i></a>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 社区动态 / 种植分区预览 (轻量级卡片) ========== -->
+<section class="py-16 bg-white">
+  <div class="container mx-auto px-4">
+    <h2 class="text-3xl font-bold text-center mb-4">🌿 来自社区的分享</h2>
+    <p class="text-center text-gray-500 max-w-xl mx-auto mb-12">城乡种植爱好者正在讨论的热门话题</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+      <!-- 帖子1 -->
+      <div class="flex gap-4 p-4 bg-gray-50 rounded-xl card-hover">
+        <div class="w-16 h-16 rounded-lg bg-primary/20 flex-shrink-0 flex items-center justify-center text-3xl text-primary">
+          <i class="fa fa-leaf"></i>
+        </div>
+        <div>
+          <h4 class="font-bold">家庭阳台番茄种植全记录</h4>
+          <p class="text-sm text-gray-500 mt-1">从育苗到采收，总结几点防徒长经验...</p>
+          <div class="flex gap-4 mt-2 text-xs text-gray-400">
+            <span><i class="fa fa-thumbs-up"></i> 34 点赞</span>
+            <span><i class="fa fa-comment"></i> 12 评论</span>
+          </div>
+        </div>
+      </div>
+      <!-- 帖子2 -->
+      <div class="flex gap-4 p-4 bg-gray-50 rounded-xl card-hover">
+        <div class="w-16 h-16 rounded-lg bg-secondary/20 flex-shrink-0 flex items-center justify-center text-3xl text-secondary">
+          <i class="fa fa-graduation-cap"></i>
+        </div>
+        <div>
+          <h4 class="font-bold">新手区：多肉度夏指南</h4>
+          <p class="text-sm text-gray-500 mt-1">遮阳、通风、控水，做好三点轻松度夏...</p>
+          <div class="flex gap-4 mt-2 text-xs text-gray-400">
+            <span><i class="fa fa-thumbs-up"></i> 56 点赞</span>
+            <span><i class="fa fa-comment"></i> 23 评论</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 社区入口按钮跳转至种植分区页面 -->
+    <div class="text-center mt-8">
+      <a href="种植分区.html" class="inline-block px-8 py-3 bg-emerald-50 text-emerald-700 rounded-full font-medium hover:bg-emerald-100 transition-colors">
+        进入社区交流 <i class="fa fa-arrow-right ml-2"></i>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 底部 (与匹配系统风格保持一致) ========== -->
+<footer class="bg-dark text-white py-12 mt-8">
+  <div class="container mx-auto px-4 text-center">
+    <div class="flex justify-center gap-2 text-3xl text-primary/80 mb-4">
+      <i class="fa fa-leaf"></i>
+      <i class="fa fa-leaf"></i>
+      <i class="fa fa-leaf"></i>
+    </div>
+    <p class="text-gray-400 text-sm max-w-2xl mx-auto">
+      智禾方隅 —— 让科技扎根土地，让种植更简单。
+    </p>
+    <div class="flex justify-center gap-6 mt-6 text-sm text-gray-500">
+      <a href="#" class="hover:text-primary transition">关于我们</a>
+      <a href="#" class="hover:text-primary transition">隐私条款</a>
+      <a href="#" class="hover:text-primary transition">商务合作</a>
+      <a href="#" class="hover:text-primary transition">帮助中心</a>
+    </div>
+    <p class="text-gray-600 text-xs mt-8">© 2026 智禾方隅 · 智慧农业先行者</p>
+    
+  </div>
+</footer>
+
+<!-- 返回顶部按钮 (与匹配系统交互一致) -->
+<button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" 
+        class="fixed bottom-6 right-6 w-12 h-12 bg-primary text-white rounded-full shadow-lg hover:bg-primary/90 transition-all hidden">
+  <i class="fa fa-arrow-up"></i>
+</button>
+
+<!-- 极简JS: 导航栏滚动效果 + 返回顶部显示 + 移动菜单模拟(仅为风格完整) -->
+<script>
+  (function() {
+    // 导航栏滚动阴影
+    const nav = document.getElementById('mainNav');
+    const backBtn = document.getElementById('backToTop');
+    
+    function updateNavAndButton() {
+      if (window.scrollY > 20) {
+        nav.classList.add('navbar-scrolled', 'bg-white/95');
+      } else {
+        nav.classList.remove('navbar-scrolled', 'bg-white/95');
+      }
+      
+      // 显示/隐藏返回顶部
+      if (window.scrollY > 300) {
+        backBtn.classList.remove('hidden');
+      } else {
+        backBtn.classList.add('hidden');
+      }
+    }
+    
+    window.addEventListener('scroll', updateNavAndButton);
+    updateNavAndButton();
+
+    // 移动端菜单按钮 (仅用于展示，不绑定实际菜单)
+    const menuBtn = document.getElementById('menuBtn');
+    if (menuBtn) {
+      menuBtn.addEventListener('click', function() {
+        alert('移动端菜单演示·可在此处加入实际导航面板');
+      });
+    }
+
+    // 保留空链接阻止跳转逻辑（非核心按钮的占位链接）
+    document.querySelectorAll('a[href="#"]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        console.log('占位链接，可根据需求补充真实地址');
+      });
+    });
+  })();
+</script>
+</body>
+</html>

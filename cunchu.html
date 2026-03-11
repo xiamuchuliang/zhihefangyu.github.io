@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI种植管家 - 云端日志存储</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 自定义CSS -->
+    <style>
+        /* 基础样式 */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* 顶部导航样式 */
+        .top-nav {
+            border-bottom: 1px solid #e5e7eb;
+            background-color: #ffffff;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            color: #65a30d;
+            /* 叶子图标绿色 */
+            font-size: 18px;
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333333;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #666666;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: #333333;
+            font-weight: 500;
+        }
+
+        /* 主要内容区 */
+        .main-content {
+            min-height: 80vh;
+            padding: 24px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* 数据卡片样式 */
+        .data-card {
+            border-radius: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid #e5e7eb;
+        }
+
+        .data-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        /* 筛选栏样式 */
+        .filter-bar {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+            border: 1px solid #e5e7eb;
+        }
+
+        /* 表格样式优化 */
+        .data-table {
+            font-size: 14px;
+        }
+
+        .data-table th {
+            font-weight: 600;
+            color: #333;
+            border-top: none;
+        }
+
+        .data-table td {
+            vertical-align: middle;
+            color: #666;
+        }
+
+        /* 详情模态框样式 */
+        .detail-modal .modal-dialog {
+            max-width: 900px;
+        }
+
+        .detail-section {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .detail-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #333;
+            min-width: 120px;
+            display: inline-block;
+        }
+
+        /* 空数据提示 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            color: #ddd;
+        }
+
+        /* 按钮样式 */
+        .action-btn {
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .top-nav {
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+            }
+
+            .nav-links {
+                gap: 16px;
+            }
+
+            .filter-bar {
+                padding: 12px;
+            }
+
+            .filter-row {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+
+        /* 动画效果 */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 标签样式 */
+        .status-tag {
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+
+        .tag-processed {
+            background-color: #d1fae5;
+            color: #059669;
+        }
+
+        .tag-pending {
+            background-color: #fffbeb;
+            color: #d97706;
+        }
+
+        .tag-error {
+            background-color: #fee2e2;
+            color: #dc2626;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 顶部导航栏 -->
+    <div class="top-nav">
+        <div class="logo-section">
+            <i class="fas fa-leaf logo-icon"></i>
+            <span class="logo-text">AI 种植管家</span>
+        </div>
+        <div class="nav-links">
+            <a href="shouye.html">功能介绍</a>
+            <a href="cunchu.html" class="active">云端日志</a>
+            <a href="community.html">技术社区</a>
+        </div>
+    </div>
+
+    <!-- 主要内容区 -->
+    <div class="main-content fade-in" id="logs">
+        <!-- 页面标题 -->
+        <div class="mb-4">
+            <h2><i class="fas fa-cloud"></i> 云端数据存储</h2>
+            <p class="text-muted">存储和管理所有种植数据输入记录及AI分析结果</p>
+        </div>
+
+        <!-- 筛选栏 -->
+        <div class="filter-bar">
+            <div class="row filter-row align-items-center g-3">
+                <div class="col-md-3">
+                    <label class="form-label mb-1">数据类型</label>
+                    <select class="form-select form-select-sm" id="dataTypeFilter">
+                        <option value="all">全部数据</option>
+                        <option value="diagnosis">AI植物诊断</option>
+                        <option value="environment">环境数据</option>
+                        <option value="crop">作物生长数据</option>
+                        <option value="disease">病虫害诊断数据</option>
+                        <option value="fertilizer">施肥方案数据</option>
+                        <option value="irrigation">灌溉方案数据</option>
+                        <option value="cultivation">AI种植技术指导</option>
+                        <option value="harvest">AI采收储存指导</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label mb-1">处理状态</label>
+                    <select class="form-select form-select-sm" id="statusFilter">
+                        <option value="all">全部状态</option>
+                        <option value="processed">已处理</option>
+                        <option value="pending">待处理</option>
+                        <option value="error">处理异常</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label mb-1">时间范围</label>
+                    <input type="date" class="form-control form-control-sm" id="dateFilter" placeholder="选择日期">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label mb-1">搜索</label>
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" id="searchInput" placeholder="搜索作物名称/数据ID">
+                        <button class="btn btn-outline-secondary" type="button" id="searchBtn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-12 mt-2">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <button class="btn btn-sm btn-outline-primary me-2" id="refreshBtn">
+                                <i class="fas fa-sync-alt"></i> 刷新数据
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary me-2" id="clearFilterBtn">
+                                <i class="fas fa-filter"></i> 清空筛选
+                            </button>
+                        </div>
+                        <div>
+                            <button class="btn btn-sm btn-success" id="exportBtn">
+                                <i class="fas fa-file-export"></i> 导出数据
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 数据统计卡片 -->
+        <div class="row mb-4">
+            <div class="col-md-2 mb-3">
+                <div class="card data-card h-100">
+                    <div class="card-body">
+                        <h6 class="card-title text-muted"><i class="fas fa-database"></i> 总数据量</h6>
+                        <h3 class="card-text" id="totalCount">128</h3>
+                        <p class="text-sm text-muted">本月新增: 24</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 mb-3">
+                <div class="card data-card h-100">
+                    <div class="card-body">
+                        <h6 class="card-title text-muted"><i class="fas fa-robot text-primary"></i> AI诊断</h6>
+                        <h3 class="card-text text-primary" id="aiDiagnosisCount">0</h3>
+                        <p class="text-sm text-muted">智能诊断记录</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 mb-3">
+                <div class="card data-card h-100">
+                    <div class="card-body">
+                        <h6 class="card-title text-muted"><i class="fas fa-check-circle"></i> 已处理数据</h6>
+                        <h3 class="card-text text-success" id="processedCount">116</h3>
+                        <p class="text-sm text-muted">处理率: 90.6%</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 mb-3">
+                <div class="card data-card h-100">
+                    <div class="card-body">
+                        <h6 class="card-title text-muted"><i class="fas fa-clock"></i> 待处理数据</h6>
+                        <h3 class="card-text text-warning" id="pendingCount">8</h3>
+                        <p class="text-sm text-muted">24小时内: 5</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 mb-3">
+                <div class="card data-card h-100">
+                    <div class="card-body">
+                        <h6 class="card-title text-muted"><i class="fas fa-exclamation-circle"></i> 异常数据</h6>
+                        <h3 class="card-text text-danger" id="errorCount">4</h3>
+                        <p class="text-sm text-muted">需人工处理: 4</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 mb-3">
+                <div class="card data-card h-100">
+                    <div class="card-body">
+                        <h6 class="card-title text-muted"><i class="fas fa-cloud-upload-alt"></i> 云端同步</h6>
+                        <h3 class="card-text text-info" id="syncCount">100%</h3>
+                        <p class="text-sm text-muted">同步状态</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 数据列表 -->
+        <div class="card data-card">
+            <div class="card-header bg-light">
+                <h5 class="mb-0"><i class="fas fa-list"></i> 数据记录列表</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover data-table mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th>数据ID</th>
+                                <th>数据类型</th>
+                                <th>作物名称</th>
+                                <th>创建时间</th>
+                                <th>处理状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dataTableBody">
+                            <!-- 数据行将通过JavaScript动态生成 -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 空数据状态 -->
+                <div id="emptyState" class="empty-state d-none">
+                    <i class="fas fa-cloud-download-alt"></i>
+                    <h4>暂无数据记录</h4>
+                    <p>还没有任何数据输入记录，快去数据录入页面添加吧</p>
+                    <a href="data-input.html" class="btn btn-primary mt-3">
+                        <i class="fas fa-plus"></i> 前往数据录入
+                    </a>
+                </div>
+            </div>
+            <div class="card-footer bg-light d-flex justify-content-between align-items-center">
+                <div class="text-muted">
+                    显示 <span id="showingCount">1-10</span> 条，共 <span id="totalDataCount">128</span> 条
+                </div>
+                <nav>
+                    <ul class="pagination pagination-sm mb-0">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1">上一页</a>
+                        </li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">下一页</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- 数据详情模态框 -->
+    <div class="modal fade detail-modal" id="dataDetailModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-info-circle"></i> 数据详情</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="dataDetailContent">
+                        <!-- 详情内容将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-sm btn-primary" id="downloadDataBtn">
+                        <i class="fas fa-download"></i> 下载数据
+                    </button>
+                    <button type="button" class="btn btn-sm btn-danger" id="deleteDataBtn">
+                        <i class="fas fa-trash"></i> 删除记录
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 确认删除模态框 -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-exclamation-triangle"></i> 确认删除</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>确定要删除这条数据记录吗？</p>
+                    <p class="text-danger"><small>此操作不可撤销！</small></p>
+                    <input type="hidden" id="deleteDataId">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-sm btn-danger" id="confirmDeleteBtn">确认删除</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-4 mt-8">
+        <div class="container">
+            <div class="row">
+                <div class="col text-center">
+                    <p class="mb-0">© 2026 AI种植管家 - 智能农业技术分享社区 | 基于 Bootstrap 5 构建</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- FileSaver.js - 用于导出文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+    <!-- 自定义JavaScript -->
+    <script>
+        // 模拟云端存储数据
+        let cloudData = [
+            {
+                id: "D20240308001",
+                type: "environment",
+                typeName: "环境数据",
+                cropName: "番茄",
+                createTime: "2026-03-08 08:30:25",
+                updateTime: "2026-03-08 08:35:12",
+                status: "processed",
+                statusName: "已处理",
+                inputData: {
+                    temperature: "25.6℃",
+                    humidity: "68%",
+                    lightIntensity: "8500 lux",
+                    soilMoisture: "45%",
+                    co2Concentration: "900 ppm",
+                    phValue: "6.8"
+                },
+                aiResult: {
+                    analysis: "当前环境参数基本适宜番茄生长，土壤湿度略低，建议适当增加灌溉量。",
+                    suggestions: [
+                        "土壤湿度建议调整至55-60%",
+                        "温度保持在24-28℃最佳",
+                        "光照强度充足，无需补光",
+                        "CO2浓度适宜，有利于光合作用"
+                    ],
+                    score: 92
+                }
+            },
+            {
+                id: "D20240308002",
+                type: "disease",
+                typeName: "病虫害诊断数据",
+                cropName: "黄瓜",
+                createTime: "2026-03-08 09:15:40",
+                updateTime: "2026-03-08 09:20:18",
+                status: "processed",
+                statusName: "已处理",
+                inputData: {
+                    symptom: "叶片出现黄色多角形病斑，背面有黑色霉层",
+                    affectedPart: "叶片",
+                    severity: "中度",
+                    photos: ["photo1.jpg", "photo2.jpg"],
+                    cropStage: "结果期"
+                },
+                aiResult: {
+                    diagnosis: "黄瓜霜霉病 (Pseudoperonospora cubensis)",
+                    confidence: "98%",
+                    treatment: [
+                        "加强通风，降低空气湿度至85%以下",
+                        "使用72%霜脲·锰锌可湿性粉剂600倍液喷雾",
+                        "间隔7天喷一次，连续防治2-3次",
+                        "及时清除病叶，减少传染源"
+                    ],
+                    prevention: "定期喷施保护性杀菌剂，控制田间湿度"
+                }
+            },
+            {
+                id: "D20240308003",
+                type: "fertilizer",
+                typeName: "施肥方案数据",
+                cropName: "草莓",
+                createTime: "2026-03-08 10:05:12",
+                updateTime: "2026-03-08 10:10:45",
+                status: "processed",
+                statusName: "已处理",
+                inputData: {
+                    cropStage: "膨果期",
+                    soilTest: {
+                        nitrogen: "中等",
+                        phosphorus: "偏低",
+                        potassium: "不足",
+                        organicMatter: "2.8%"
+                    },
+                    yieldTarget: "2000kg/亩",
+                    previousFertilizer: "平衡型复合肥"
+                },
+                aiResult: {
+                    fertilizerFormula: "高钾型水溶肥 (N-P-K: 15-10-30)",
+                    applicationRate: "5kg/亩·次",
+                    frequency: "7-10天一次",
+                    method: "滴灌施用",
+                    additional: "补充钙镁肥，预防果实缺钙",
+                    expectedEffect: "提高果实甜度和硬度，增加单果重"
+                }
+            },
+            {
+                id: "D20240308004",
+                type: "irrigation",
+                typeName: "灌溉方案数据",
+                cropName: "生菜",
+                createTime: "2026-03-08 11:20:30",
+                updateTime: "",
+                status: "pending",
+                statusName: "待处理",
+                inputData: {
+                    soilType: "砂壤土",
+                    rootDepth: "15cm",
+                    evaporationRate: "3mm/天",
+                    rainfall: "0mm/7天",
+                    cropDensity: "30株/m²"
+                },
+                aiResult: {}
+            },
+            {
+                id: "D20240308005",
+                type: "crop",
+                typeName: "作物生长数据",
+                cropName: "辣椒",
+                createTime: "2026-03-08 14:10:22",
+                updateTime: "2026-03-08 14:15:30",
+                status: "error",
+                statusName: "处理异常",
+                inputData: {
+                    plantHeight: "45cm",
+                    stemDiameter: "1.2cm",
+                    leafCount: "28片",
+                    flowerCount: "12朵",
+                    fruitCount: "8个",
+                    growthRate: "正常"
+                },
+                aiResult: {
+                    errorMessage: "AI分析模型调用失败，请重新提交数据",
+                    errorCode: "MODEL_ERROR_001"
+                }
+            }
+        ];
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function () {
+            // 加载AI诊断记录到云端数据
+            loadAiDiagnosisLogs();
+            renderDataTable();
+            updateStatistics();
+            setupEventListeners();
+        });
+
+        // 加载AI诊断记录
+        function loadAiDiagnosisLogs() {
+            try {
+                const aiLogs = JSON.parse(localStorage.getItem('aiDiagnosisLogs') || '[]');
+
+                // 将AI诊断记录合并到云端数据中
+                if (aiLogs.length > 0) {
+                    // 在现有数据前面插入AI诊断记录
+                    cloudData = [...aiLogs, ...cloudData];
+                    console.log(`已加载 ${aiLogs.length} 条AI诊断记录到云端日志`);
+                }
+            } catch (error) {
+                console.error('加载AI诊断记录失败:', error);
+            }
+        }
+
+        // 渲染数据表格
+        function renderDataTable(filteredData = null) {
+            const tableBody = document.getElementById('dataTableBody');
+            const emptyState = document.getElementById('emptyState');
+            const dataToRender = filteredData || cloudData;
+
+            // 清空表格
+            tableBody.innerHTML = '';
+
+            if (dataToRender.length === 0) {
+                // 显示空数据状态
+                emptyState.classList.remove('d-none');
+                return;
+            }
+
+            // 隐藏空数据状态
+            emptyState.classList.add('d-none');
+
+            // 渲染数据行
+            dataToRender.forEach(item => {
+                const row = createDataRow(item);
+                tableBody.appendChild(row);
+            });
+
+            // 更新显示计数
+            document.getElementById('showingCount').textContent = `1-${Math.min(dataToRender.length, 10)}`;
+            document.getElementById('totalDataCount').textContent = cloudData.length;
+        }
+
+        // 创建数据行
+        function createDataRow(item) {
+            const tr = document.createElement('tr');
+
+            // 状态标签样式
+            let statusTagClass = '';
+            switch (item.status) {
+                case 'processed':
+                    statusTagClass = 'tag-processed';
+                    break;
+                case 'pending':
+                    statusTagClass = 'tag-pending';
+                    break;
+                case 'error':
+                    statusTagClass = 'tag-error';
+                    break;
+            }
+
+            tr.innerHTML = `
+                <td>${item.id}</td>
+                <td><i class="fas fa-${getTypeIcon(item.type)} me-1"></i> ${item.typeName}</td>
+                <td>${item.cropName}</td>
+                <td>${item.createTime}</td>
+                <td><span class="status-tag ${statusTagClass}">${item.statusName}</span></td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary action-btn view-btn" data-id="${item.id}">
+                        <i class="fas fa-eye"></i> 查看
+                    </button>
+                </td>
+            `;
+
+            return tr;
+        }
+
+        // 获取类型图标
+        function getTypeIcon(type) {
+            const icons = {
+                diagnosis: 'robot',
+                environment: 'thermometer-half',
+                crop: 'seedling',
+                disease: 'virus',
+                fertilizer: 'tint',
+                irrigation: 'faucet'
+            };
+            return icons[type] || 'database';
+        }
+
+        // 更新统计数据
+        function updateStatistics() {
+            const total = cloudData.length;
+            const processed = cloudData.filter(item => item.status === 'processed').length;
+            const pending = cloudData.filter(item => item.status === 'pending').length;
+            const error = cloudData.filter(item => item.status === 'error').length;
+
+            // 统计AI诊断记录（通过ID前缀识别）
+            const aiDiagnosis = cloudData.filter(item => item.id && item.id.startsWith('AI')).length;
+
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('processedCount').textContent = processed;
+            document.getElementById('pendingCount').textContent = pending;
+            document.getElementById('errorCount').textContent = error;
+            document.getElementById('aiDiagnosisCount').textContent = aiDiagnosis;
+        }
+
+        // 设置事件监听器
+        function setupEventListeners() {
+            // 查看详情按钮
+            document.addEventListener('click', function (e) {
+                if (e.target.closest('.view-btn')) {
+                    const btn = e.target.closest('.view-btn');
+                    const dataId = btn.dataset.id;
+                    showDataDetail(dataId);
+                }
+            });
+
+            // 筛选相关
+            document.getElementById('dataTypeFilter').addEventListener('change', filterData);
+            document.getElementById('statusFilter').addEventListener('change', filterData);
+            document.getElementById('dateFilter').addEventListener('change', filterData);
+            document.getElementById('searchBtn').addEventListener('click', filterData);
+            document.getElementById('searchInput').addEventListener('keyup', function (e) {
+                if (e.key === 'Enter') filterData();
+            });
+
+            // 刷新按钮
+            document.getElementById('refreshBtn').addEventListener('click', function () {
+                showToast('正在刷新数据...', 'info');
+                setTimeout(() => {
+                    renderDataTable();
+                    updateStatistics();
+                    showToast('数据刷新成功！', 'success');
+                }, 800);
+            });
+
+            // 清空筛选
+            document.getElementById('clearFilterBtn').addEventListener('click', function () {
+                document.getElementById('dataTypeFilter').value = 'all';
+                document.getElementById('statusFilter').value = 'all';
+                document.getElementById('dateFilter').value = '';
+                document.getElementById('searchInput').value = '';
+                renderDataTable();
+            });
+
+            // 导出数据
+            document.getElementById('exportBtn').addEventListener('click', exportAllData);
+
+            // 下载单条数据
+            document.getElementById('downloadDataBtn').addEventListener('click', downloadCurrentData);
+
+            // 删除数据 - 显示确认框
+            document.getElementById('deleteDataBtn').addEventListener('click', function () {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('dataDetailModal'));
+                modal.hide();
+
+                const currentDataId = document.getElementById('currentDataId').value;
+                document.getElementById('deleteDataId').value = currentDataId;
+
+                const confirmModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+                confirmModal.show();
+            });
+
+            // 确认删除
+            document.getElementById('confirmDeleteBtn').addEventListener('click', function () {
+                const dataId = document.getElementById('deleteDataId').value;
+                deleteDataRecord(dataId);
+
+                const confirmModal = bootstrap.Modal.getInstance(document.getElementById('confirmDeleteModal'));
+                confirmModal.hide();
+            });
+        }
+
+        // 筛选数据
+        function filterData() {
+            const typeFilter = document.getElementById('dataTypeFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            const dateFilter = document.getElementById('dateFilter').value;
+            const searchText = document.getElementById('searchInput').value.toLowerCase();
+
+            let filtered = cloudData;
+
+            // 按类型筛选
+            if (typeFilter !== 'all') {
+                filtered = filtered.filter(item => item.type === typeFilter);
+            }
+
+            // 按状态筛选
+            if (statusFilter !== 'all') {
+                filtered = filtered.filter(item => item.status === statusFilter);
+            }
+
+            // 按日期筛选
+            if (dateFilter) {
+                filtered = filtered.filter(item => item.createTime.startsWith(dateFilter));
+            }
+
+            // 按搜索文本筛选
+            if (searchText) {
+                filtered = filtered.filter(item =>
+                    item.id.toLowerCase().includes(searchText) ||
+                    item.cropName.toLowerCase().includes(searchText)
+                );
+            }
+
+            // 重新渲染表格
+            renderDataTable(filtered);
+
+            // 显示筛选结果提示
+            showToast(`筛选出 ${filtered.length} 条数据`, 'info');
+        }
+
+        // 显示数据详情
+        function showDataDetail(dataId) {
+            const item = cloudData.find(item => item.id === dataId);
+            if (!item) return;
+
+            // 存储当前数据ID
+            const detailContent = document.getElementById('dataDetailContent');
+            detailContent.innerHTML = '';
+
+            // 创建隐藏的ID输入框
+            const idInput = document.createElement('input');
+            idInput.type = 'hidden';
+            idInput.id = 'currentDataId';
+            idInput.value = dataId;
+            detailContent.appendChild(idInput);
+
+            // 基本信息部分
+            const basicSection = createDetailSection('基本信息', [
+                { label: '数据ID', value: item.id },
+                { label: '数据类型', value: item.typeName },
+                { label: '作物名称', value: item.cropName },
+                { label: '创建时间', value: item.createTime },
+                { label: '更新时间', value: item.updateTime || '暂无' },
+                { label: '处理状态', value: `<span class="status-tag ${getStatusClass(item.status)}">${item.statusName}</span>` }
+            ]);
+            detailContent.appendChild(basicSection);
+
+            // 输入数据部分
+            const inputSection = createInputDataSection(item.inputData, item.type);
+            detailContent.appendChild(inputSection);
+
+            // AI分析结果部分
+            if (item.status === 'processed' && Object.keys(item.aiResult).length > 0) {
+                const resultSection = createResultSection(item.aiResult, item.type);
+                detailContent.appendChild(resultSection);
+            } else if (item.status === 'error') {
+                // 错误信息部分
+                const errorSection = createErrorSection(item.aiResult);
+                detailContent.appendChild(errorSection);
+            } else if (item.status === 'pending') {
+                // 待处理提示
+                const pendingSection = createPendingSection();
+                detailContent.appendChild(pendingSection);
+            }
+
+            // 显示模态框
+            const modal = new bootstrap.Modal(document.getElementById('dataDetailModal'));
+            modal.show();
+        }
+
+        // 创建详情部分
+        function createDetailSection(title, items) {
+            const section = document.createElement('div');
+            section.className = 'detail-section';
+
+            const titleElement = document.createElement('h6');
+            titleElement.innerHTML = `<i class="fas fa-info-circle me-1"></i> ${title}`;
+            section.appendChild(titleElement);
+
+            const content = document.createElement('div');
+            content.className = 'detail-content';
+
+            items.forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'mb-2';
+                row.innerHTML = `<span class="detail-label">${item.label}：</span> ${item.value}`;
+                content.appendChild(row);
+            });
+
+            section.appendChild(content);
+            return section;
+        }
+
+        // 创建输入数据部分
+        function createInputDataSection(inputData, type) {
+            const section = document.createElement('div');
+            section.className = 'detail-section';
+
+            const titleElement = document.createElement('h6');
+            titleElement.innerHTML = '<i class="fas fa-keyboard me-1"></i> 输入数据';
+            section.appendChild(titleElement);
+
+            const content = document.createElement('div');
+            content.className = 'detail-content';
+
+            // 根据数据类型渲染不同的输入数据
+            for (const [key, value] of Object.entries(inputData)) {
+                if (typeof value === 'object' && value !== null) {
+                    // 嵌套对象
+                    const groupTitle = document.createElement('div');
+                    groupTitle.className = 'fw-bold mt-2 mb-1';
+                    groupTitle.textContent = getInputKeyName(key, type) + '：';
+                    content.appendChild(groupTitle);
+
+                    const nestedDiv = document.createElement('div');
+                    nestedDiv.style.marginLeft = '20px';
+
+                    for (const [nestedKey, nestedValue] of Object.entries(value)) {
+                        const row = document.createElement('div');
+                        row.className = 'mb-1';
+                        row.innerHTML = `<span class="detail-label">${getInputKeyName(nestedKey, type)}：</span> ${nestedValue}`;
+                        nestedDiv.appendChild(row);
+                    }
+
+                    content.appendChild(nestedDiv);
+                } else {
+                    // 普通值
+                    const row = document.createElement('div');
+                    row.className = 'mb-2';
+                    row.innerHTML = `<span class="detail-label">${getInputKeyName(key, type)}：</span> ${value}`;
+                    content.appendChild(row);
+                }
+            }
+
+            section.appendChild(content);
+            return section;
+        }
+
+        // 创建AI结果部分
+        function createResultSection(result, type) {
+            const section = document.createElement('div');
+            section.className = 'detail-section';
+
+            const titleElement = document.createElement('h6');
+            titleElement.innerHTML = '<i class="fas fa-robot me-1"></i> AI分析结果';
+            section.appendChild(titleElement);
+
+            const content = document.createElement('div');
+            content.className = 'detail-content';
+
+            // 根据数据类型渲染不同的结果
+            for (const [key, value] of Object.entries(result)) {
+                if (Array.isArray(value)) {
+                    // 数组类型（建议列表）
+                    const row = document.createElement('div');
+                    row.className = 'mb-2';
+                    row.innerHTML = `<span class="detail-label">${getResultKeyName(key, type)}：</span>`;
+
+                    const list = document.createElement('ul');
+                    list.className = 'mb-0 ms-4';
+
+                    value.forEach(item => {
+                        const li = document.createElement('li');
+                        li.textContent = item;
+                        list.appendChild(li);
+                    });
+
+                    row.appendChild(list);
+                    content.appendChild(row);
+                } else {
+                    // 普通值
+                    const row = document.createElement('div');
+                    row.className = 'mb-2';
+                    row.innerHTML = `<span class="detail-label">${getResultKeyName(key, type)}：</span> ${value}`;
+                    content.appendChild(row);
+                }
+            }
+
+            section.appendChild(content);
+            return section;
+        }
+
+        // 创建错误信息部分
+        function createErrorSection(errorData) {
+            const section = document.createElement('div');
+            section.className = 'detail-section';
+
+            const titleElement = document.createElement('h6');
+            titleElement.innerHTML = '<i class="fas fa-exclamation-circle me-1 text-danger"></i> 处理错误信息';
+            section.appendChild(titleElement);
+
+            const content = document.createElement('div');
+            content.className = 'detail-content text-danger';
+
+            const errorRow = document.createElement('div');
+            errorRow.className = 'mb-2';
+            errorRow.innerHTML = `<span class="detail-label">错误信息：</span> ${errorData.errorMessage}`;
+            content.appendChild(errorRow);
+
+            const codeRow = document.createElement('div');
+            codeRow.className = 'mb-2';
+            codeRow.innerHTML = `<span class="detail-label">错误代码：</span> ${errorData.errorCode}`;
+            content.appendChild(codeRow);
+
+            const suggestionRow = document.createElement('div');
+            suggestionRow.className = 'mb-2 text-dark';
+            suggestionRow.innerHTML = '<span class="detail-label">处理建议：</span> 请检查输入数据格式，或稍后重新提交处理请求';
+            content.appendChild(suggestionRow);
+
+            section.appendChild(content);
+            return section;
+        }
+
+        // 创建待处理部分
+        function createPendingSection() {
+            const section = document.createElement('div');
+            section.className = 'detail-section';
+
+            const titleElement = document.createElement('h6');
+            titleElement.innerHTML = '<i class="fas fa-clock me-1 text-warning"></i> 处理状态';
+            section.appendChild(titleElement);
+
+            const content = document.createElement('div');
+            content.className = 'detail-content text-warning';
+
+            const row = document.createElement('div');
+            row.innerHTML = '该数据正在等待AI分析处理，请稍后查看结果。通常处理时间不超过5分钟。';
+            content.appendChild(row);
+
+            section.appendChild(content);
+            return section;
+        }
+
+        // 获取输入数据键名的中文显示
+        function getInputKeyName(key, type) {
+            const names = {
+                plantType: '植物类型',
+                plantStage: '生长阶段',
+                problemDescription: '问题描述',
+                source: '数据来源',
+                temperature: '温度',
+                humidity: '相对湿度',
+                lightHours: '光照时长',
+                lightIntensity: '光照强度',
+                soilMoisture: '土壤湿度',
+                co2Concentration: 'CO₂浓度',
+                phValue: 'pH值',
+                symptom: '症状描述',
+                affectedPart: '受害部位',
+                severity: '严重程度',
+                photos: '上传图片',
+                cropStage: '作物生育期',
+                soilTest: '土壤检测结果',
+                nitrogen: '氮含量',
+                phosphorus: '磷含量',
+                potassium: '钾含量',
+                organicMatter: '有机质含量',
+                yieldTarget: '产量目标',
+                previousFertilizer: '上一次施肥',
+                soilType: '土壤类型',
+                rootDepth: '根系深度',
+                evaporationRate: '蒸发量',
+                rainfall: '7天降雨量',
+                cropDensity: '种植密度',
+                plantHeight: '株高',
+                stemDiameter: '茎粗',
+                leafCount: '叶片数',
+                flowerCount: '开花数',
+                fruitCount: '结果数',
+                growthRate: '生长速度'
+            };
+            return names[key] || key;
+        }
+
+        // 获取结果键名的中文显示
+        function getResultKeyName(key, type) {
+            const names = {
+                healthScore: '健康评分',
+                diagnosis: '诊断结果',
+                suggestions: '养护建议',
+                confidence: '诊断置信度',
+                analysisTime: '分析时间',
+                analysis: '环境分析',
+                score: '环境适宜度评分',
+                treatment: '防治方案',
+                prevention: '预防措施',
+                fertilizerFormula: '推荐肥料配方',
+                applicationRate: '施用剂量',
+                frequency: '施用频率',
+                method: '施用方式',
+                additional: '补充建议',
+                expectedEffect: '预期效果',
+                errorMessage: '错误信息',
+                errorCode: '错误代码'
+            };
+            return names[key] || key;
+        }
+
+        // 获取状态样式类
+        function getStatusClass(status) {
+            switch (status) {
+                case 'processed': return 'tag-processed';
+                case 'pending': return 'tag-pending';
+                case 'error': return 'tag-error';
+                default: return '';
+            }
+        }
+
+        // 导出所有数据
+        function exportAllData() {
+            showToast('正在准备导出数据...', 'info');
+
+            setTimeout(() => {
+                // 转换为JSON格式
+                const jsonData = JSON.stringify(cloudData, null, 2);
+                const blob = new Blob([jsonData], { type: 'application/json' });
+
+                // 生成文件名
+                const date = new Date().toISOString().split('T')[0];
+                const fileName = `AI种植管家_数据导出_${date}.json`;
+
+                // 下载文件
+                saveAs(blob, fileName);
+
+                showToast('数据导出成功！', 'success');
+            }, 1000);
+        }
+
+        // 下载当前数据
+        function downloadCurrentData() {
+            const dataId = document.getElementById('currentDataId').value;
+            const item = cloudData.find(item => item.id === dataId);
+
+            if (!item) {
+                showToast('数据不存在！', 'error');
+                return;
+            }
+
+            // 转换为JSON格式
+            const jsonData = JSON.stringify(item, null, 2);
+            const blob = new Blob([jsonData], { type: 'application/json' });
+
+            // 生成文件名
+            const fileName = `AI种植管家_${item.id}_${item.cropName}_${item.typeName}.json`;
+
+            // 下载文件
+            saveAs(blob, fileName);
+
+            showToast('数据下载成功！', 'success');
+        }
+
+        // 删除数据记录
+        function deleteDataRecord(dataId) {
+            const index = cloudData.findIndex(item => item.id === dataId);
+
+            if (index !== -1) {
+                cloudData.splice(index, 1);
+                renderDataTable();
+                updateStatistics();
+                showToast('数据记录已删除！', 'success');
+            } else {
+                showToast('数据记录不存在！', 'error');
+            }
+        }
+
+        // 显示提示信息
+        function showToast(message, type = 'info') {
+            // 检查是否已存在toast容器
+            let toastContainer = document.getElementById('toastContainer');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'toastContainer';
+                toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+                document.body.appendChild(toastContainer);
+            }
+
+            // 创建toast元素
+            const toastId = 'toast-' + Date.now();
+            const toast = document.createElement('div');
+
+            // 设置toast样式
+            let bgClass = '';
+            switch (type) {
+                case 'success': bgClass = 'bg-success'; break;
+                case 'error': bgClass = 'bg-danger'; break;
+                case 'warning': bgClass = 'bg-warning'; break;
+                default: bgClass = 'bg-info';
+            }
+
+            toast.className = `toast align-items-center text-white ${bgClass} border-0`;
+            toast.role = 'alert';
+            toast.ariaLive = 'assertive';
+            toast.ariaAtomic = 'true';
+            toast.id = toastId;
+
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            `;
+
+            // 添加到容器
+            toastContainer.appendChild(toast);
+
+            // 初始化并显示toast
+            const toastInstance = new bootstrap.Toast(toast, {
+                delay: 3000
+            });
+            toastInstance.show();
+
+            // 显示后移除
+            toast.addEventListener('hidden.bs.toast', function () {
+                toast.remove();
+            });
+        }
+    </script>
+</body>
+
+</html>

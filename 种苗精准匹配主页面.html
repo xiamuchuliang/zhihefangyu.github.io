@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>种子精准匹配系统 · 完整版</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome -->
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#16a34a',
+            secondary: '#0284c7',
+            dark: '#0f172a',
+            light: '#f8fafc'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* 性能优化样式 */
+    .card-hover {
+      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: transform;
+      backface-visibility: hidden;
+    }
+    .card-hover:hover {
+      transform: translateY(-4px);
+    }
+    img {
+      content-visibility: auto;
+      background-color: #f3f4f6;
+    }
+    .card-shadow {
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    /* 骨架屏动画 */
+    .skeleton {
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      animation: loading 1.5s infinite;
+    }
+    @keyframes loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    /* 移动端菜单 */
+    .mobile-menu {
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+    .mobile-menu.open {
+      transform: translateX(0);
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+<!-- 导航栏 -->
+<nav class="sticky top-0 z-50 bg-white shadow-sm">
+  <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <a  class="nav-link" href="index.html">返回首页</a>
+      <i class="fa fa-leaf text-primary text-2xl"></i>
+      <span class="text-xl font-bold text-dark">种子精准匹配系统</span>
+    </div>
+    <!-- PC端菜单 -->
+    <div class="hidden md:flex items-center gap-6">
+      <a href="#farmer" class="hover:text-primary transition-colors">农户录入</a>
+      <a href="#user" class="hover:text-primary transition-colors">用户需求</a>
+      <a href="#list" class="hover:text-primary transition-colors">种苗列表</a>
+      <a href="#match" class="hover:text-primary transition-colors">智能匹配</a>
+    </div>
+    <!-- 移动端按钮 -->
+    <button id="menuBtn" class="md:hidden text-dark text-2xl">
+      <i class="fa fa-bars"></i>
+    </button>
+  </div>
+</nav>
+
+<!-- 移动端侧滑菜单 -->
+<div id="mobileMenu" class="fixed top-0 left-0 w-64 h-full bg-white z-50 shadow-lg mobile-menu">
+  <div class="p-6">
+    <div class="flex justify-between items-center mb-6">
+      <span class="font-bold text-lg">菜单</span>
+      <button id="closeMenu" class="text-2xl">&times;</button>
+    </div>
+    <div class="flex flex-col gap-4">
+      <a href="#farmer" class="py-2 hover:text-primary" onclick="closeMobileMenu()">农户录入</a>
+      <a href="#user" class="py-2 hover:text-primary" onclick="closeMobileMenu()">用户需求</a>
+      <a href="#list" class="py-2 hover:text-primary" onclick="closeMobileMenu()">种苗列表</a>
+      <a href="#match" class="py-2 hover:text-primary" onclick="closeMobileMenu()">智能匹配</a>
+    </div>
+  </div>
+</div>
+<div id="menuOverlay" class="fixed inset-0 bg-black/50 hidden z-40"></div>
+
+<main class="container mx-auto px-4 py-8 space-y-16">
+
+  <!-- ========== 农户端（完整表单） ========== -->
+  <section id="farmer" class="max-w-4xl mx-auto scroll-mt-20">
+    <div class="bg-white rounded-2xl card-shadow p-6 md:p-8">
+      <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+        <i class="fa fa-user text-primary"></i>农户种苗信息录入
+      </h2>
+      <form id="farmerForm" class="space-y-6" onsubmit="event.preventDefault(); submitFarmer()">
+
+        <!-- 农户姓名 -->
+        <div>
+          <label class="block mb-2 font-medium">
+            农户姓名 <span class="text-red-500">*</span>
+          </label>
+          <div class="relative">
+            <input type="text" id="farmerName" placeholder="请输入您的姓名" 
+                   class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none"
+                   required>
+            <i class="fa fa-user-circle absolute right-3 top-3 text-gray-400"></i>
+          </div>
+        </div>
+
+        <!-- 种苗品种 -->
+        <div>
+          <label class="block mb-2 font-medium">种苗品种 <span class="text-red-500">*</span></label>
+          <select id="seedVariety" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none" required>
+            <option value="">请选择品种</option>
+            <option value="蝴蝶兰">蝴蝶兰</option>
+            <option value="腊梅">腊梅</option>
+            <option value="兰花">兰花</option>
+            <option value="多肉">多肉</option>
+            <option value="玫瑰">玫瑰</option>
+            <option value="牡丹">牡丹</option>
+          </select>
+        </div>
+
+        <!-- 品种照片预览 + 上传 -->
+        <div>
+          <label class="block mb-2 font-medium">种苗照片（可多选）</label>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3" id="seedImagePreview">
+            <!-- 默认示例图片，实际项目中会动态生成 -->
+            <div class="seed-img card-hover rounded-lg overflow-hidden border cursor-pointer border-primary">
+              <img src="https://tse1-mm.cn.bing.net/th/id/OIP-C.os3llzL4Zn9W7Run3ghC-QHaFk?w=270&h=202&c=7&r=0&o=7&dpr=2&pid=1.7&rm=3" 
+                   alt="蝴蝶兰" class="w-full aspect-square object-cover" loading="lazy">
+              <div class="p-2 text-center text-sm">蝴蝶兰</div>
+            </div>
+            <div class="seed-img card-hover rounded-lg overflow-hidden border cursor-pointer border-gray-200">
+              <img src="https://tse2-mm.cn.bing.net/th/id/OIP-C.dtCq-2K9y52NuXsxgD0rjQHaLG?w=115&h=180&c=7&r=0&o=7&dpr=2&pid=1.7&rm=3" 
+                   alt="腊梅" class="w-full aspect-square object-cover" loading="lazy">
+              <div class="p-2 text-center text-sm">腊梅</div>
+            </div>
+            <div class="seed-img card-hover rounded-lg overflow-hidden border cursor-pointer border-gray-200">
+              <img src="https://tse4-mm.cn.bing.net/th/id/OIP-C.ayZbtuKYKCdZQU1mGqa7fwHaHF?w=179&h=180&c=7&r=0&o=7&dpr=2&pid=1.7&rm=3" 
+                   alt="兰花" class="w-full aspect-square object-cover" loading="lazy">
+              <div class="p-2 text-center text-sm">兰花</div>
+            </div>
+            <div class="seed-img card-hover rounded-lg overflow-hidden border cursor-pointer border-gray-200">
+              <img src="https://tse1-mm.cn.bing.net/th/id/OIP-C.1NsO3hjkyBaOG4czcfwo4gHaE8?w=270&h=180&c=7&r=0&o=7&dpr=2&pid=1.7&rm=3" 
+                   alt="多肉" class="w-full aspect-square object-cover" loading="lazy">
+              <div class="p-2 text-center text-sm">多肉</div>
+            </div>
+          </div>
+          <button type="button" onclick="document.getElementById('seedImages').click()" 
+                  class="px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 text-sm">
+            <i class="fa fa-upload mr-1"></i> 上传照片
+          </button>
+          <input type="file" id="seedImages" multiple accept="image/*" class="hidden" onchange="previewImages(this, 'seedImagePreview')">
+        </div>
+
+        <!-- 核心参数 - 扩展为两行 -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div>
+            <label class="block mb-2 font-medium">纯度 (%) <span class="text-red-500">*</span></label>
+            <input type="number" id="purity" min="0" max="100" step="0.1" placeholder="98" 
+                   class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none" required>
+          </div>
+          <div>
+            <label class="block mb-2 font-medium">预估产量 (株/亩)</label>
+            <input type="number" id="yield" min="0" placeholder="1000" 
+                   class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none">
+          </div>
+          <div>
+            <label class="block mb-2 font-medium">价格 (元/株) <span class="text-red-500">*</span></label>
+            <input type="number" id="price" min="0" step="0.01" placeholder="0.8" 
+                   class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none" required>
+          </div>
+          <div>
+            <label class="block mb-2 font-medium">库存数量 (株) <span class="text-red-500">*</span></label>
+            <input type="number" id="stock" min="0" placeholder="5000" 
+                   class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none" required>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block mb-2 font-medium">可售日期</label>
+            <input type="date" id="availableDate" 
+                   class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none">
+          </div>
+          <div>
+            <label class="block mb-2 font-medium">发货地址 <span class="text-red-500">*</span></label>
+            <input type="text" id="address" placeholder="省/市/区 详细地址" 
+                   class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none" required>
+          </div>
+        </div>
+
+        <!-- 资质核验 + 田间实拍合并 -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div>
+            <label class="block mb-2 font-medium">平台核验资质</label>
+            <div class="flex items-center gap-3">
+              <button type="button" onclick="document.getElementById('certFile').click()" 
+                      class="px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 flex items-center gap-2">
+                <i class="fa fa-upload"></i> 选择文件
+              </button>
+              <span class="text-sm text-gray-500">jpg/png/pdf</span>
+            </div>
+            <input type="file" id="certFile" accept=".jpg,.jpeg,.png,.pdf" class="hidden">
+            <p class="text-xs text-gray-500 mt-1">营业执照、种植许可证等</p>
+          </div>
+          <div>
+            <label class="block mb-2 font-medium">田间实拍</label>
+            <button type="button" onclick="document.getElementById('fieldImages').click()" 
+                    class="px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 flex items-center gap-2">
+              <i class="fa fa-camera"></i> 上传田间照片
+            </button>
+            <input type="file" id="fieldImages" multiple accept="image/*" class="hidden">
+            <p class="text-xs text-gray-500 mt-1">展示真实种植环境</p>
+          </div>
+        </div>
+
+        <!-- 提交按钮 -->
+        <div class="pt-4">
+          <button type="submit" id="submitFarmerBtn" 
+                  class="w-full py-3 bg-primary hover:bg-primary/90 text-white rounded-lg font-medium transition-all flex items-center justify-center gap-2">
+            <span>提交并录入数据库</span>
+            <i class="fa fa-spinner fa-spin hidden"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ========== 城市用户需求（完整表单 + 实时匹配） ========== -->
+  <section id="user" class="max-w-4xl mx-auto scroll-mt-20">
+    <div class="bg-white rounded-2xl card-shadow p-6 md:p-8">
+      <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+        <i class="fa fa-shopping-cart text-secondary"></i>城市用户需求输入
+      </h2>
+      <form id="userForm" class="space-y-6" onsubmit="event.preventDefault(); submitUser()">
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block mb-2 font-medium">需求品种 <span class="text-red-500">*</span></label>
+            <select id="demandVariety" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-secondary/30 focus:border-secondary outline-none" required>
+              <option value="">请选择</option>
+              <option>蝴蝶兰</option>
+              <option>腊梅</option>
+              <option>兰花</option>
+              <option>多肉</option>
+              <option>玫瑰</option>
+              <option>牡丹</option>
+            </select>
+          </div>
+          <div>
+            <label class="block mb-2 font-medium">用途</label>
+            <select id="purpose" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-secondary/30 focus:border-secondary outline-none">
+              <option>家庭种植</option>
+              <option>商业种植</option>
+              <option>科研实验</option>
+              <option>景观绿化</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label class="block mb-2 font-medium">需求量 (株) <span class="text-red-500">*</span></label>
+            <input type="number" id="demandQuantity" min="1" placeholder="100" 
+                   class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-secondary/30 focus:border-secondary outline-none" required>
+          </div>
+          <div>
+            <label class="block mb-2 font-medium">期望纯度 (%)</label>
+            <input type="number" id="expectedPurity" min="0" max="100" placeholder="95" 
+                   class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-secondary/30 focus:border-secondary outline-none">
+          </div>
+          <div>
+            <label class="block mb-2 font-medium">预算 (元/株)</label>
+            <input type="text" id="budget" placeholder="0.5-1.0" 
+                   class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-secondary/30 focus:border-secondary outline-none">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block mb-2 font-medium">期望收货日期</label>
+            <input type="date" id="expectedDate" 
+                   class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-secondary/30 focus:border-secondary outline-none">
+          </div>
+          <div>
+            <label class="block mb-2 font-medium">收货地址 <span class="text-red-500">*</span></label>
+            <input type="text" id="deliveryAddress" placeholder="省/市/区 详细地址" 
+                   class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-secondary/30 focus:border-secondary outline-none" required>
+          </div>
+        </div>
+
+        <div>
+          <label class="block mb-2 font-medium">种植环境简述</label>
+          <textarea id="environment" rows="2" placeholder="阳台/庭院/大棚/露天等" 
+                    class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-secondary/30 focus:border-secondary outline-none"></textarea>
+        </div>
+
+        <div>
+          <label class="block mb-2 font-medium">联系方式 <span class="text-red-500">*</span></label>
+          <input type="text" id="contact" placeholder="手机号/微信" 
+                 class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-secondary/30 focus:border-secondary outline-none" required>
+        </div>
+
+        <!-- 匹配度滑块 - 交互式 -->
+        <div>
+          <label class="block mb-2 font-medium">纯度要求严格程度</label>
+          <input type="range" id="strictness" min="0" max="100" value="80" class="w-full">
+          <div class="flex justify-between text-xs text-gray-500">
+            <span>宽松</span>
+            <span>标准</span>
+            <span>严格</span>
+          </div>
+        </div>
+
+        <button type="submit" id="submitUserBtn" 
+                class="w-full py-3 bg-secondary hover:bg-secondary/90 text-white rounded-lg font-medium transition-all flex items-center justify-center gap-2">
+          <span>提交需求，立即匹配</span>
+          <i class="fa fa-spinner fa-spin hidden"></i>
+        </button>
+      </form>
+
+      <!-- 匹配结果展示区 -->
+      <div id="matchResult" class="mt-8 hidden">
+        <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+          <i class="fa fa-star text-yellow-500"></i>智能匹配结果
+        </h3>
+        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+          <div class="flex flex-col sm:flex-row gap-4">
+            <img id="matchImage" src="https://tse1-mm.cn.bing.net/th/id/OIP-C.os3llzL4Zn9W7Run3ghC-QHaFk?w=270&h=202&c=7&r=0&o=7&dpr=2&pid=1.7&rm=3" 
+                 class="w-24 h-24 rounded-lg object-cover">
+            <div class="flex-1">
+              <p id="matchName" class="font-bold text-lg">蝴蝶兰种苗（特级）</p>
+              <p id="matchDetails" class="text-sm text-gray-600 mb-2">纯度98% · 0.8元/株 · 库存5000株</p>
+              <div class="flex items-center gap-2 mb-3">
+                <span class="text-sm font-medium">匹配度</span>
+                <div class="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
+                  <div id="matchScoreBar" class="h-full bg-green-500" style="width: 95%"></div>
+                </div>
+                <span id="matchScore" class="text-sm font-bold text-green-600">95%</span>
+              </div>
+              <div class="flex gap-2">
+                <button class="px-4 py-2 bg-primary text-white text-sm rounded-lg hover:bg-primary/90">立即联系农户</button>
+                <button class="px-4 py-2 border border-primary text-primary text-sm rounded-lg hover:bg-primary/10">查看详情</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 种苗列表（带筛选和排序） ========== -->
+  <section id="list" class="max-w-6xl mx-auto scroll-mt-20">
+    <h2 class="text-2xl font-bold mb-6">种苗市场</h2>
+
+    <!-- 筛选栏 - 完整功能 -->
+    <div class="bg-white rounded-xl p-4 mb-6 flex flex-col md:flex-row gap-3">
+      <select id="filterVariety" class="px-4 py-2 border border-gray-200 rounded-lg min-w-[140px]">
+        <option value="all">全部品种</option>
+        <option>蝴蝶兰</option>
+        <option>腊梅</option>
+        <option>兰花</option>
+        <option>多肉</option>
+        <option>玫瑰</option>
+        <option>牡丹</option>
+      </select>
+      <select id="sortBy" class="px-4 py-2 border border-gray-200 rounded-lg min-w-[140px]">
+        <option value="default">默认排序</option>
+        <option value="price_asc">价格从低到高</option>
+        <option value="price_desc">价格从高到低</option>
+        <option value="purity_desc">纯度优先</option>
+        <option value="newest">最新发布</option>
+      </select>
+      <div class="flex-1 flex gap-2">
+        <input type="text" id="searchInput" placeholder="搜索农户或品种" 
+               class="flex-1 px-4 py-2 border border-gray-200 rounded-lg">
+        <button onclick="filterSeeds()" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90">
+          <i class="fa fa-search"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- 种苗列表 - 动态加载骨架屏 -->
+    <div id="seedList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- 动态通过JS渲染，这里放骨架屏 -->
+    </div>
+
+    <!-- 加载更多按钮 -->
+    <div class="text-center mt-8">
+        <a href="cui.html" 
+           class="inline-block w-full sm:w-72 px-8 py-4 bg-primary text-white rounded-xl hover:bg-primary/90 transition-all shadow-md text-lg font-medium">
+          查看更多种苗 <i class="fa fa-arrow-right ml-2"></i>
+        </a>
+        <p class="text-xs text-gray-500 mt-3">浏览全部品种及详细筛选</p>
+      </div>
+
+    <!-- 返回顶部按钮 -->
+    <button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" 
+            class="fixed bottom-6 right-6 w-12 h-12 bg-primary text-white rounded-full shadow-lg hover:bg-primary/90 transition-all hidden">
+      <i class="fa fa-arrow-up"></i>
+    </button>
+  </section>
+
+  <!-- ========== 智能匹配专区 ========== -->
+  <section id="match" class="max-w-6xl mx-auto scroll-mt-20">
+    <h2 class="text-2xl font-bold mb-6">🔥 热门推荐 · 智能匹配</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- 推荐卡片1 -->
+      <div class="bg-white rounded-xl card-shadow p-4">
+        <div class="relative">
+          <img src="https://tse1-mm.cn.bing.net/th/id/OIP-C.os3llzL4Zn9W7Run3ghC-QHaFk?w=270&h=202&c=7&r=0&o=7&dpr=2&pid=1.7&rm=3" 
+               class="w-full h-32 object-cover rounded-lg" loading="lazy">
+          <span class="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full">热销</span>
+        </div>
+        <div class="mt-3">
+          <div class="flex justify-between">
+            <span class="font-bold">蝴蝶兰</span>
+            <span class="text-primary font-bold">0.8元</span>
+          </div>
+          <p class="text-xs text-gray-500">陈某某 · 98%纯度</p>
+          <div class="mt-2 flex items-center gap-1">
+            <i class="fa fa-star text-yellow-400"></i>
+            <span class="text-sm">4.9</span>
+            <span class="text-xs text-gray-400 ml-2">已售2300株</span>
+          </div>
+        </div>
+      </div>
+      <!-- 其他卡片类似...为简洁省略，实际循环生成 -->
+    </div>
+  </section>
+</main>
+
+<footer class="bg-dark text-white py-10 mt-16">
+  <div class="container mx-auto px-4 text-center text-gray-400 text-sm">
+    <p>© 2026 智禾方隅 · 让每一粒种子找到最适合的土壤</p>
+  </div>
+</footer>
+
+<script>
+  // ========== 全局变量 ==========
+  let farmers = JSON.parse(localStorage.getItem('farmers') || '[]');
+  let currentPage = 1;
+  const pageSize = 6;
+
+  // ========== 初始化 ==========
+  document.addEventListener('DOMContentLoaded', function() {
+    renderSeedList();
+    initEventListeners();
+    checkBackToTop();
+  });
+
+  // ========== 事件监听初始化 ==========
+  function initEventListeners() {
+    // 图片点击选中
+    document.querySelectorAll('.seed-img').forEach(el => {
+      el.addEventListener('click', function() {
+        document.querySelectorAll('.seed-img').forEach(i => {
+          i.classList.remove('border-primary');
+          i.classList.add('border-gray-200');
+        });
+        this.classList.remove('border-gray-200');
+        this.classList.add('border-primary');
+      });
+    });
+
+    // 移动端菜单
+    const menuBtn = document.getElementById('menuBtn');
+    const closeMenu = document.getElementById('closeMenu');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const overlay = document.getElementById('menuOverlay');
+
+    if (menuBtn) {
+      menuBtn.addEventListener('click', () => {
+        mobileMenu.classList.add('open');
+        overlay.classList.remove('hidden');
+      });
+    }
+    if (closeMenu) {
+      closeMenu.addEventListener('click', closeMobileMenu);
+    }
+    if (overlay) {
+      overlay.addEventListener('click', closeMobileMenu);
+    }
+
+    // 滚动监听显示返回顶部
+    window.addEventListener('scroll', checkBackToTop);
+  }
+
+  function closeMobileMenu() {
+    document.getElementById('mobileMenu').classList.remove('open');
+    document.getElementById('menuOverlay').classList.add('hidden');
+  }
+
+  // ========== 农户提交 ==========
+  function submitFarmer() {
+    // 表单验证
+    const name = document.getElementById('farmerName').value.trim();
+    const variety = document.getElementById('seedVariety').value;
+    const purity = document.getElementById('purity').value;
+    const price = document.getElementById('price').value;
+    const stock = document.getElementById('stock').value;
+    const address = document.getElementById('address').value.trim();
+
+    if (!name || !variety || !purity || !price || !stock || !address) {
+      alert('请填写所有必填字段');
+      return;
+    }
+
+    // 显示加载状态
+    const btn = document.getElementById('submitFarmerBtn');
+    const spinner = btn.querySelector('.fa-spinner');
+    const btnText = btn.querySelector('span');
+    spinner.classList.remove('hidden');
+    btnText.textContent = '提交中...';
+    btn.disabled = true;
+
+    // 模拟提交
+    setTimeout(() => {
+      const farmerData = {
+        id: Date.now(),
+        name,
+        variety,
+        purity: parseFloat(purity),
+        price: parseFloat(price),
+        stock: parseInt(stock),
+        address,
+        yield: document.getElementById('yield').value || '未知',
+        availableDate: document.getElementById('availableDate').value || '即日',
+        timestamp: new Date().toISOString()
+      };
+
+      farmers.push(farmerData);
+      localStorage.setItem('farmers', JSON.stringify(farmers));
+
+      // 恢复按钮
+      spinner.classList.add('hidden');
+      btnText.textContent = '提交并录入数据库';
+      btn.disabled = false;
+
+      alert(`提交成功！欢迎 ${name}`);
+      document.getElementById('farmerForm').reset();
+      renderSeedList(); // 刷新列表
+    }, 1000);
+  }
+
+  // ========== 用户需求提交 + 匹配 ==========
+  function submitUser() {
+    const variety = document.getElementById('demandVariety').value;
+    const quantity = document.getElementById('demandQuantity').value;
+    const address = document.getElementById('deliveryAddress').value.trim();
+    const contact = document.getElementById('contact').value.trim();
+
+    if (!variety || !quantity || !address || !contact) {
+      alert('请填写必填字段');
+      return;
+    }
+
+    // 显示加载
+    const btn = document.getElementById('submitUserBtn');
+    const spinner = btn.querySelector('.fa-spinner');
+    const btnText = btn.querySelector('span');
+    spinner.classList.remove('hidden');
+    btnText.textContent = '匹配中...';
+    btn.disabled = true;
+
+    setTimeout(() => {
+      // 模拟匹配算法
+      const matchedSeed = {
+        name: '蝴蝶兰种苗（特级）',
+        image: 'https://tse1-mm.cn.bing.net/th/id/OIP-C.os3llzL4Zn9W7Run3ghC-QHaFk?w=270&h=202&c=7&r=0&o=7&dpr=2&pid=1.7&rm=3',
+        purity: 98,
+        price: 0.8,
+        stock: 5000,
+        farmer: '陈某某',
+        matchScore: 95
+      };
+
+      // 显示匹配结果
+      document.getElementById('matchImage').src = matchedSeed.image;
+      document.getElementById('matchName').textContent = matchedSeed.name;
+      document.getElementById('matchDetails').textContent = 
+        `纯度${matchedSeed.purity}% · ${matchedSeed.price}元/株 · 库存${matchedSeed.stock}株`;
+      document.getElementById('matchScore').textContent = matchedSeed.matchScore + '%';
+      document.getElementById('matchScoreBar').style.width = matchedSeed.matchScore + '%';
+      document.getElementById('matchResult').classList.remove('hidden');
+
+      // 恢复按钮
+      spinner.classList.add('hidden');
+      btnText.textContent = '提交需求，立即匹配';
+      btn.disabled = false;
+
+      // 滚动到匹配结果
+      document.getElementById('matchResult').scrollIntoView({ behavior: 'smooth' });
+    }, 1500);
+  }
+
+  // ========== 渲染种苗列表 ==========
+  function renderSeedList(reset = true) {
+    const container = document.getElementById('seedList');
+    
+    // 显示骨架屏
+    if (reset) {
+      container.innerHTML = Array(6).fill(0).map(() => `
+        <div class="bg-white rounded-xl card-shadow p-4">
+          <div class="skeleton w-full h-40 rounded-lg"></div>
+          <div class="skeleton h-6 w-3/4 mt-3"></div>
+          <div class="skeleton h-4 w-1/2 mt-2"></div>
+          <div class="skeleton h-10 w-full mt-4"></div>
+        </div>
+      `).join('');
+    }
+
+    // 模拟加载数据
+    setTimeout(() => {
+      const seedData = farmers.length > 0 ? farmers : [
+        { id: 1, name: '陈某某', variety: '蝴蝶兰', purity: 98, price: 0.8, stock: 5000, yield: 1000, image: 'https://tse1-mm.cn.bing.net/th/id/OIP-C.os3llzL4Zn9W7Run3ghC-QHaFk?w=270&h=202&c=7&r=0&o=7&dpr=2&pid=1.7&rm=3' },
+        { id: 2, name: '邓某某', variety: '腊梅', purity: 96, price: 1.2, stock: 3000, yield: 800, image: 'https://tse2-mm.cn.bing.net/th/id/OIP-C.dtCq-2K9y52NuXsxgD0rjQHaLG?w=115&h=180&c=7&r=0&o=7&dpr=2&pid=1.7&rm=3' },
+        { id: 3, name: '王某某', variety: '多肉', purity: 97, price: 0.6, stock: 8000, yield: 1200, image: 'https://tse1-mm.cn.bing.net/th/id/OIP-C.1NsO3hjkyBaOG4czcfwo4gHaE8?w=270&h=180&c=7&r=0&o=7&dpr=2&pid=1.7&rm=3' },
+      ];
+
+      container.innerHTML = seedData.map(item => `
+        <div class="bg-white rounded-xl card-shadow card-hover overflow-hidden">
+          <div class="aspect-video overflow-hidden bg-gray-100">
+            <img src="${item.image || item.image}" alt="${item.variety}" class="w-full h-full object-cover" loading="lazy">
+          </div>
+          <div class="p-5 space-y-3">
+            <div class="flex justify-between items-center">
+              <h3 class="text-lg font-bold">${item.variety}种苗</h3>
+              <span class="text-primary font-bold">${item.price}元/株</span>
+            </div>
+            <div class="text-sm text-gray-600">
+              <p>纯度：${item.purity}% · 产量：${item.yield || '未知'}株/亩</p>
+              <p>农户：${item.name} · 库存：${item.stock}株</p>
+            </div>
+            <div class="pt-2 flex gap-2">
+              <button class="flex-1 py-2 border border-primary text-primary hover:bg-primary hover:text-white rounded-lg transition-all text-sm">
+                查看详情
+              </button>
+              <button class="flex-1 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 text-sm">
+                立即联系
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }, reset ? 800 : 300);
+  }
+
+  // ========== 筛选功能 ==========
+  function filterSeeds() {
+    const variety = document.getElementById('filterVariety').value;
+    const sort = document.getElementById('sortBy').value;
+    const search = document.getElementById('searchInput').value.toLowerCase();
+
+    console.log('筛选条件:', { variety, sort, search });
+    renderSeedList(true);
+    // 实际项目中这里会调用API或过滤本地数据
+    alert('筛选功能已就绪（演示模式）');
+  }
+
+  // ========== 图片预览 ==========
+  function previewImages(input, previewId) {
+    const preview = document.getElementById(previewId);
+    if (input.files) {
+      for (let i = 0; i < input.files.length; i++) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const div = document.createElement('div');
+          div.className = 'seed-img card-hover rounded-lg overflow-hidden border cursor-pointer border-gray-200';
+          div.innerHTML = `
+            <img src="${e.target.result}" class="w-full aspect-square object-cover">
+            <div class="p-2 text-center text-sm">新上传</div>
+          `;
+          preview.appendChild(div);
+          
+          // 添加点击事件
+          div.addEventListener('click', function() {
+            document.querySelectorAll('.seed-img').forEach(i => {
+              i.classList.remove('border-primary');
+              i.classList.add('border-gray-200');
+            });
+            div.classList.remove('border-gray-200');
+            div.classList.add('border-primary');
+          });
+        }
+        reader.readAsDataURL(input.files[i]);
+      }
+    }
+  }
+
+  // ========== 返回顶部显示/隐藏 ==========
+  function checkBackToTop() {
+    const btn = document.getElementById('backToTop');
+    if (window.scrollY > 300) {
+      btn.classList.remove('hidden');
+    } else {
+      btn.classList.add('hidden');
+    }
+  }
+
+  // ========== 暴露全局函数 ==========
+  window.submitFarmer = submitFarmer;
+  window.submitUser = submitUser;
+  window.filterSeeds = filterSeeds;
+  window.loadMoreSeeds = loadMoreSeeds;
+  window.previewImages = previewImages;
+  window.closeMobileMenu = closeMobileMenu;
+</script>
+</body>
+</html>
